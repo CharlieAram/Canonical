@@ -1,3 +1,5 @@
+[Watch the demo video](https://youtu.be/uEhczMG5CSk)
+
 # Canonical
 
 Canonical helps people review a coding agent's changes in business terms: what changed, which business rules still hold, and what performance tradeoffs were measured. The intended product turns a commit into a business graph, executes checks in Daytona, stores its evidence in SurrealDB, and exports business context for the next coding agent.
