@@ -1,3 +1,4 @@
+import { loadContextWorkspace, registerContextRoutes } from './context-routes.ts';
 import { randomUUID } from 'node:crypto';
 import Fastify from 'fastify';
 import { RunSchema, StartRunSchema, type RunStore } from '@canonical/contracts';
@@ -21,6 +22,8 @@ export function buildApp({ store, daytona, evaluate }: AppOptions) {
     status: 'ok', storage: store.kind,
     executionModes: daytona?.apiKey ? ['local', 'daytona'] : ['local'],
   }));
+
+  const drainContextJobs = registerContextRoutes(app, store);
 
   app.get('/api/runs', async () => ({ runs: await store.list() }));
 
@@ -76,7 +79,7 @@ export function buildApp({ store, daytona, evaluate }: AppOptions) {
     if (!run) return reply.code(404).send({ error: 'Run not found' });
     return reply.type('text/markdown; charset=utf-8')
       .header('content-disposition', 'attachment; filename="canonical-context.md"')
-      .send(exportContext(run));
+      .send(exportContext(run, (await loadContextWorkspace(store, run)).approvals));
   });
 
   app.setErrorHandler((error, request, reply) => {
@@ -89,6 +92,7 @@ export function buildApp({ store, daytona, evaluate }: AppOptions) {
   });
   app.addHook('onClose', async () => {
     await activeJob;
+    await drainContextJobs();
     await store.close();
   });
   return app;

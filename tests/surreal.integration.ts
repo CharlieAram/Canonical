@@ -17,6 +17,7 @@ test('SurrealDB persists graph evidence, isolates traversals, and emits live cha
     database: process.env.SURREAL_DATABASE ?? 'development',
     username: process.env.SURREAL_USERNAME ?? 'root',
     password: process.env.SURREAL_PASSWORD ?? 'canonical-local-only',
+    authLevel: (process.env.SURREAL_AUTH_LEVEL ?? 'root') as 'root' | 'namespace' | 'database',
   });
   const store = createSurrealStore(db);
   const run = createRun(`integration-${randomUUID()}`, 'local');

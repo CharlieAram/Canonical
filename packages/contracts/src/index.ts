@@ -1,3 +1,5 @@
+import type { ContextStore } from './context.ts';
+export * from './context.ts';
 import { z } from 'zod';
 
 // This is the UI/backend handoff. Keep SDK types and credentials out of here.
@@ -87,6 +89,7 @@ export type Health = z.infer<typeof HealthSchema>;
 // Persistence seam for backend work. The browser only depends on the HTTP API.
 export interface RunStore {
   readonly kind: 'memory' | 'surreal';
+  readonly context?: ContextStore;
   save(run: AnalysisRun): Promise<void>;
   get(id: string): Promise<AnalysisRun | undefined>;
   list(): Promise<AnalysisRun[]>;

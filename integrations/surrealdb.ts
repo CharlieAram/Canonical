@@ -1,6 +1,9 @@
 import { readFile } from 'node:fs/promises';
 import { RecordId, Surreal, Table } from 'surrealdb';
 import { RunSchema, type AnalysisRun, type Graph, type RunStore } from '@canonical/contracts';
+import { createSurrealContextStore } from './surreal-context.ts';
+
+export { createSurrealContextStore, getRequirementProvenance } from './surreal-context.ts';
 
 // Official reference: https://surrealdb.com/docs/reference/javascript
 export interface SurrealConfig {
@@ -55,6 +58,7 @@ type StoredRun = { data: RunData; provenance?: Graph['provenance'] };
 export function createSurrealStore(db: Surreal): RunStore {
   return {
     kind: 'surreal',
+    context: createSurrealContextStore(db),
     async save(run) {
       const { graph, ...data } = RunSchema.parse(run);
       const bindings: Record<string, unknown> = { record: new RecordId('analysis_run', run.id), data, provenance: graph.provenance, runId: run.id };

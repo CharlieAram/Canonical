@@ -69,3 +69,12 @@ Official references: [JavaScript SDK](https://surrealdb.com/docs/reference/javas
 The initial verification passed all 14 tests. A real Daytona smoke run passed all three baseline checks and requested sandbox cleanup without warnings. Integration checks against an actual SurrealDB `3.3.0` server passed graph persistence and live notifications. Run the smoke commands with your own configuration to verify your environment.
 
 The initial dependency audit reports four high-severity entries from one transitive `braces` advisory through Daytona's `fast-glob` dependency. There is no fixed release available in the installed dependency path. This adapter does not accept user-provided glob patterns; reassess the dependency when upgrading or adding file-selection features.
+
+## Conversation provenance
+
+[surreal-context.ts](surreal-context.ts) implements atomic context-workspace updates
+and native source/segment/proposal/approval graph relationships. The API's reviewed
+quotes come from graph traversal through `getRequirementProvenance`, while run
+execution evidence remains unchanged. The context integration test exercises
+transaction rollback, competing writers, and isolated citation paths. See
+[transcript review](../docs/TRANSCRIPT_CONTEXT.md) for setup and test commands.

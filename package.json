@@ -15,6 +15,7 @@
     "test": "tsx --test tests/*.test.ts",
     "test:surreal": "tsx --env-file-if-exists=.env --test tests/surreal.integration.ts",
     "check": "npm run typecheck && npm test && npm run build --workspace @canonical/ui",
+    "test:surreal:context": "tsx --test tests/context-surreal.integration.ts",
     "db:up": "docker compose up -d surrealdb",
     "db:down": "docker compose down",
     "db:init": "tsx --env-file-if-exists=.env scripts/init-db.ts",

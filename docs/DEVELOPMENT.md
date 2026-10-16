@@ -62,3 +62,17 @@ For hosted SurrealDB, configure `SURREAL_URL` with the database connection endpo
 The [meeting-context scope](MEETING_CONTEXT.md) proposes transcript import, reviewed requirement proposals, and an optional Fathom adapter. Keep provider setup separate from the initial text-import flow. The UI can develop the proposal/source drawer while backend work adds source normalization and approval lineage.
 
 Signed previews, browser evidence, and grounded questions can extend the same evidence path after the core slices work. [PLAN.md](../PLAN.md) describes the intended product in detail; it is a roadmap, not a claim that every feature is implemented.
+
+## Conversation review slice
+
+The shared conversation contracts are in `packages/contracts/src/context.ts`.
+`BusinessContextPanel` and the existing evidence panel support transcript import,
+manual quote-to-rule proposals, review, and approved citations. Backend operations
+live in `packages/runner/src/business-context.ts`; HTTP orchestration lives in
+`apps/api/src/context-routes.ts`. Storage implementations are the memory context
+store and `integrations/surreal-context.ts`. See [the user/API guide](TRANSCRIPT_CONTEXT.md).
+
+This slice preserves the selected run's executed policy. Reviewed conversation
+context is added afterward, scoped to that run, and exported separately from the
+original check evidence. The next policy-authoring slice can create and commit a
+new approved policy before execution instead of claiming retroactive provenance.

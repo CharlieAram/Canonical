@@ -83,3 +83,16 @@ For business context from calls, the [meeting-context scope](docs/MEETING_CONTEX
 See [PLAN.md](PLAN.md) for the vertical-slice roadmap, [RESEARCH.md](RESEARCH.md) for the platform research, and [integrations/README.md](integrations/README.md) for SDK setup and verification.
 
 Hosted demonstration verified: [broken cache fails business review](https://github.com/CharlieAram/CanonicalTestbed/actions/runs/38941269929), while [account-scoped cache passes](https://github.com/CharlieAram/CanonicalTestbed/actions/runs/38941270563). Ordinary unit tests pass on both branches.
+
+## Add conversation context
+
+Open a completed report and use **Bring the business decision into view**. Paste
+or import `.txt`, `.md`, or `.vtt` text, select an exact quote, propose its connection
+to an existing requirement, and review it. **Use synthetic example** provides an
+explicitly labeled demo conversation. Accepted quotes appear alongside the
+candidate's execution evidence and in the agent-context download.
+
+This is manual citation review. Context added after execution does not change the
+original policy or CI outcome. SurrealDB stores the provenance as native graph
+relationships when configured; memory mode works without credentials.
+See [the transcript review guide](docs/TRANSCRIPT_CONTEXT.md).

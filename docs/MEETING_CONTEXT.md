@@ -1,6 +1,6 @@
 # Meeting context: transcript first, Fathom when capture is needed
 
-Research checked October 16, 2026. This is an implementation scope; no listener account, recording, import endpoint, or provider connection has been created by this document.
+Research checked October 16, 2026. Manual transcript import, exact quote selection, review, and context export are now implemented; see [the usage guide](TRANSCRIPT_CONTEXT.md). Listener accounts, automated extraction, and provider connections remain scoped below.
 
 **Start with pasted text and `.txt`, `.md`, or `.vtt` imports. Choose Fathom if we need a new call listener.** This lets us demonstrate the useful chain immediately: product conversation → proposed business rule → reviewed requirement → failed check on a real commit. Capture and synchronization can be added behind the same import contract.
 
@@ -106,4 +106,4 @@ Acceptance cases for the first slice:
 - A failed check links to the exact approved requirement version and its source quote.
 - The exported context carries approved provenance; unreviewed suggestions remain visibly unapproved.
 
-The listener integration is scoped here only. Implement the transcript import slice after the real repository/CI comparison is usable, then add Fathom pull if automated capture improves the next demo.
+The listener integration is scoped here only. The implemented first slice associates reviewed quotes with existing run requirements without rewriting historical CI policy. New requirement generation and publishing revised policy remain future work; add Fathom pull when automated capture improves the next demo.
