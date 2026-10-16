@@ -103,6 +103,37 @@ h3 { font-size: 13px; font-weight: 600; }
 .rail-button.is-active { color: var(--accent); background: var(--surface-inset); box-shadow: var(--inset); }
 .main { flex: 1; min-width: 0; max-width: 1440px; padding: 24px 32px 48px 8px; }
 
+/* Commit inbox and the selected analysis share a simple, centered page. */
+.main.product-main { width: 100%; max-width: 1160px; margin: 0 auto; padding: 40px 32px 64px; }
+.commit-home { margin-top: 16px; }
+.commit-list { display: grid; gap: 16px; }
+.commit-list > li { min-width: 0; }
+.commit-link {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 24px;
+  width: 100%; min-width: 0; padding: 22px 24px; border: 0; border-radius: var(--r-lg);
+  color: var(--text); text-decoration: none; text-align: left; background: var(--surface);
+  box-shadow: var(--raised-sm); transition: box-shadow .2s var(--ease), background .2s var(--ease);
+}
+.commit-link:hover { background: var(--surface-hi); box-shadow: var(--raised); }
+.commit-link:active { background: var(--surface-inset); box-shadow: var(--inset); }
+.commit-copy { display: grid; gap: 7px; min-width: 0; overflow-wrap: anywhere; }
+.commit-copy strong { font-size: 15px; font-weight: 600; line-height: 1.4; }
+.commit-copy p { color: var(--text-secondary); }
+.commit-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 12px; color: var(--text-muted); font-size: 12px; }
+.commit-meta > * { min-width: 0; overflow-wrap: anywhere; }
+.commit-result { display: flex; align-items: center; justify-content: flex-end; gap: 12px; color: var(--text-muted); }
+.analysis-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 24px; min-width: 0; }
+.analysis-header h1, .analysis-header p { overflow-wrap: anywhere; }
+.back-link { display: inline-flex; align-items: center; gap: 8px; width: fit-content; min-height: 36px; padding: 4px 0; border-radius: 8px; color: var(--text-muted); text-decoration: none; font-size: 12px; }
+.back-link:hover { color: var(--accent-b); }
+.agent-strip { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 12px 0 20px; color: var(--text-muted); font-size: 12px; }
+.agent-strip > * { min-width: 0; overflow-wrap: anywhere; }
+.agent-strip > li { display: inline-flex; align-items: center; gap: 6px; }
+.agent-strip small { color: var(--text-muted); }
+.business-list { display: grid; gap: 12px; }
+.business-list > * { min-width: 0; overflow-wrap: anywhere; }
+.business-list > li { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 8px; align-items: baseline; }
+
 /* Page header */
 .page-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 22px; flex-wrap: wrap; }
 .page-title { min-width: 0; }
@@ -258,6 +289,11 @@ h3 { font-size: 13px; font-weight: 600; }
   .rail { position: sticky; top: 0; height: auto; width: 100%; flex-direction: row; padding: 10px 16px; gap: 10px; background: var(--surface); box-shadow: 0 6px 14px rgba(166,158,148,.25); }
   .rail-logo { margin: 0 6px 0 0; width: 40px; height: 40px; }
   .main { padding: 18px 16px 40px; }
+  .main.product-main { padding: 24px 18px 40px; }
+  .commit-home { margin-top: 8px; }
+  .commit-link { grid-template-columns: minmax(0, 1fr); gap: 14px; padding: 18px; }
+  .commit-result { justify-content: space-between; }
+  .analysis-header { gap: 12px; margin-bottom: 20px; }
   .page-actions { width: 100%; justify-content: flex-start; }
   .page-actions .button-primary { flex: 1; }
   .panel { padding: 16px; border-radius: var(--r-lg); }
