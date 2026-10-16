@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { Controls, Handle, Position, ReactFlow, type Edge, type Node, type NodeProps } from '@xyflow/react';
 import type { AnalysisRun, LayerDiff } from '@canonical/contracts';
-import { StatusPill, changeLabel, changeTone, edgeTypes } from './ui';
+import { FitOnResize, StatusPill, changeLabel, changeTone, edgeTypes } from './ui';
 import { layoutObjects, mergeLayer, type MergedNode } from '../lib/review';
 
 type ObjectData = { item: MergedNode; selected: boolean; onSelect?: (item: MergedNode) => void };
@@ -56,7 +56,7 @@ export function ObjectsSection({ layer, selectedId = '', onSelectChange, onConte
         <ul className="legend" aria-label="Key"><li><i className="legend-swatch" />Changed</li><li><i className="dot dot-failed" />Removed</li><li><i className="legend-line" />New relationship</li></ul>
       </div>
       <div className="flow-scroll"><div className="flow-canvas object-canvas fading-grid">
-        <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes} edgeTypes={edgeTypes} fitView fitViewOptions={{ padding: 0.1 }} nodesDraggable={false} nodesConnectable={false} elementsSelectable={false} zoomOnScroll={false} preventScrolling={false} minZoom={0.1} maxZoom={1.2} proOptions={{ hideAttribution: true }}><Controls showInteractive={false} /></ReactFlow>
+        <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes} edgeTypes={edgeTypes} fitView fitViewOptions={{ padding: 0.1 }} nodesDraggable={false} nodesConnectable={false} elementsSelectable={false} zoomOnScroll={false} preventScrolling={false} minZoom={0.1} maxZoom={1.2} proOptions={{ hideAttribution: true }}><FitOnResize padding={0.12} maxZoom={1} /><Controls showInteractive={false} /></ReactFlow>
       </div></div>
       <span className="provenance">{layer.provenance === 'static-analysis' ? 'Static analysis' : `Model inference${layer.model ? ` · ${layer.model.name}` : ''}`}</span>
     </div>

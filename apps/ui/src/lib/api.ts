@@ -7,7 +7,16 @@ import { fixtureWorkspace, fixtureImport, fixturePropose, fixtureReview } from '
 // The only UI/backend boundary. Never put server credentials in VITE_* variables.
 export const isFixture = import.meta.env.VITE_DATA_SOURCE === 'fixture';
 // Fixture review produced once by the real static extractor (packages/runner/src/extraction.ts).
-const withReview = (run: AnalysisRun): AnalysisRun => ({ ...run, review: ReviewSchema.parse(reviewFixture) });
+const withReview = (run: AnalysisRun): AnalysisRun => {
+  // The bill of business mirrors the fixture's own executed checks.
+  const status = (variant: 'baseline' | 'candidate', id: string) => run.results.find(result => result.variant === variant)?.checks.find(check => check.requirementId === id)?.status ?? 'pending';
+  const billOfBusiness = run.requirements.map(rule => ({
+    id: rule.id, text: rule.text, conceptIds: rule.conceptIds,
+    status: status('candidate', rule.id), baselineStatus: status('baseline', rule.id), candidateStatus: status('candidate', rule.id),
+    evidence: run.results.flatMap(result => result.checks.filter(check => check.requirementId === rule.id).map(check => ({ variant: result.variant, checkId: check.id, status: check.status, expected: check.expected, actual: check.actual }))),
+  }));
+  return { ...run, review: ReviewSchema.parse({ ...reviewFixture, billOfBusiness }) };
+};
 const fixtureRuns: AnalysisRun[] = [withReview(createUiFixture())];
 
 async function request(path: string, init?: RequestInit): Promise<Response> {
