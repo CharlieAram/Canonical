@@ -25,7 +25,7 @@ function FlowNode({ data }: NodeProps<Node<StepData>>) {
   </>;
 }
 const nodeTypes = { step: FlowNode };
-const edgeLabel = (label: string) => label === 'true' ? 'Yes' : label === 'false' ? 'No' : undefined;
+const edgeLabel = (label: string) => label === 'true' ? 'Yes' : label === 'false' ? 'No' : label === 'next' ? undefined : label.replaceAll('_', ' ');
 
 export function LogicSection({ layer }: { run: AnalysisRun; layer: LayerDiff }) {
   const list = useMemo(() => flows(layer), [layer]);

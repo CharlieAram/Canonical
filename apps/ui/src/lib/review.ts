@@ -129,8 +129,14 @@ export function logicSuggestions(run: AnalysisRun, layer: LayerDiff): Suggestion
 export const flowOf = (id: string) => id.slice('logic:'.length).split(':')[0]!;
 export function flows(layer: LayerDiff) {
   const { nodes, edges } = mergeLayer(layer);
+  if (!nodes.length) return [];
+  // Model nodes use semantic IDs, not the parser's logic:<scope>:<step> convention.
+  // Keep the whole extracted diagram, including disconnected or non-entry steps.
+  if (layer.provenance === 'model-inference' || nodes.some(node => !node.id.startsWith('logic:'))) {
+    return [{ scope: 'Commit logic', nodes, edges, changed: nodes.filter(node => node.change !== 'unchanged').length }];
+  }
   return nodes.filter(node => node.node.kind === 'entry').map(entry => {
-    const scope = entry.node.label;
+    const scope = flowOf(entry.id);
     const inFlow = nodes.filter(node => flowOf(node.id) === scope);
     const ids = new Set(inFlow.map(node => node.id));
     return { scope, nodes: inFlow, edges: edges.filter(edge => ids.has(edge.source) && ids.has(edge.target)), changed: inFlow.filter(node => node.change !== 'unchanged').length };
