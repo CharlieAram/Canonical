@@ -117,3 +117,8 @@ Live push verification: [prepared regression](https://github.com/CharlieAram/Can
 produces the pricing cross; [prepared repair](https://github.com/CharlieAram/CanonicalTestbed/actions/runs/38946314398)
 produces three checks. Both appear through shared storage/live events without
 manual report imports. Use a fresh `demo/` branch from Testbed `main` to rehearse.
+
+Model-backed pushes are also verified: [regression](https://github.com/CharlieAram/CanonicalTestbed/actions/runs/38949432996)
+and [repair](https://github.com/CharlieAram/CanonicalTestbed/actions/runs/38949600157)
+use real OpenAI extraction agents before Daytona establishes the business verdicts.
+See [the verified model demo](docs/MODEL_EXTRACTION.md#verified-hosted-model-demo).

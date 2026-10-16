@@ -5,7 +5,9 @@ Actions compare it with the approved baseline, execute checks in Daytona, persis
 progress to SurrealDB Cloud, and watch the existing dashboard update. Artifact
 downloads remain useful evidence, but are not the transport for this live path.
 
-The hosted path is verified:
+The model-backed hosted path is verified in [the model demo record](MODEL_EXTRACTION.md#verified-hosted-model-demo). Both extraction agents use real OpenAI requests before Daytona establishes the business verdicts.
+
+The earlier static hosted path was also verified:
 
 - [Regression push b4f754f](https://github.com/CharlieAram/CanonicalTestbed/actions/runs/38946185169): unit tests pass; bill of business fails account pricing and passes its other two entries. Report `b85c07c4-5223-453e-968a-5c8872145ca8`.
 - [Repair push 9331517](https://github.com/CharlieAram/CanonicalTestbed/actions/runs/38946314398): unit tests and all three business entries pass. Report `6e200269-dd02-41e2-a619-33585316e314`.
@@ -45,8 +47,9 @@ or paste them into a workflow. The workflow supplies credentials only to the
 trusted runner's analysis step. Repository code runs in Daytona without inheriting
 the runner's environment.
 
-Testbed `main` and `demo/live-review` pin the published Canonical runner at
-`a65548733c9a67cfbc8df706ceba472c3d2a3baa`. The shared database secrets are configured.
+Testbed `main` and `demo/model-review` pin the published model-backed runner at
+`9a8c0d37d7dec690933943bb82584e3bc8e3c512`. OpenAI, Daytona, and shared database
+secrets are configured. Earlier `demo/live-review` reports use the static runner.
 When adopting a newer runner, update this fixed SHA explicitly before preparing
 the demo branch. `CANONICAL_STORE` is explicitly `surreal`; missing database configuration
 is an error, never a silent memory fallback.

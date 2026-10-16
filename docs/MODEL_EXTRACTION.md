@@ -102,3 +102,22 @@ automatically included in these repository calls.
 Before a live demo, verify one real provider-backed review and inspect its response
 IDs and usage. Then use the regression/repair sequence in [PUSH_DEMO.md](PUSH_DEMO.md).
 No additional hosted run is implied by adding configuration or passing unit tests.
+
+## Verified hosted model demo
+
+Both model-backed pushes have been exercised end to end with the dashboard open:
+
+- [Broken cache, commit 395053d](https://github.com/CharlieAram/CanonicalTestbed/actions/runs/38949432996): model layers complete, account pricing fails, and the other two business checks pass. Report `ddaa31e7-115e-4550-a1fd-252c73e56d1e`.
+- [Fixed cache, commit efdd5a4](https://github.com/CharlieAram/CanonicalTestbed/actions/runs/38949600157): model layers complete and all three business checks pass. Report `272b642e-bc75-40bf-8e51-e468fb4e8150`.
+
+Both used `gpt-5.4-mini-2026-03-17`. Object extraction validated on its first request;
+logic extraction used its one allowed validation repair. All request IDs and
+combined usage remain in the reports. Browser observation confirmed automatic run
+discovery, model tasks running, Daytona execution, both cited layer diffs, and the
+final verdicts without refreshing or importing reports. The full check passes 90
+tests and the production UI build.
+
+Testbed `main` now pins runner `9a8c0d37d7dec690933943bb82584e3bc8e3c512` and
+requires the configured OpenAI secret. The completed `demo/model-review` branch
+contains the repaired implementation. Start a fresh `demo/` branch from `main`
+to replay the prepared regression and repair using [the push guide](PUSH_DEMO.md).
