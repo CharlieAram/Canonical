@@ -19,6 +19,13 @@ export const LayerDiffSchema = z.object({
     change: z.enum(['added', 'removed', 'modified', 'unchanged']),
   })),
   summary: z.string(), limitations: z.array(z.string()),
+  model: z.object({
+    provider: z.literal('openai'), name: z.string(), responseId: z.string(),
+    responseIds: z.array(z.string()).optional(),
+    attempts: z.number().int().min(1).max(2).optional(),
+    inputTokens: z.number().int().nonnegative().optional(),
+    outputTokens: z.number().int().nonnegative().optional(),
+  }).optional(),
 });
 export const AgentIdSchema = z.enum(['objects', 'logic', 'business-checks']);
 export const ReviewAgentSchema = z.object({

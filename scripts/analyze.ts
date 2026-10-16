@@ -7,6 +7,7 @@ import { createRun } from '@canonical/demo';
 import { createEvaluator, createRepositoryRun, prepareRepositoryComparison, executeRun, exportContext } from '@canonical/runner';
 import { executeRepositoryReview } from '../packages/runner/src/review-pipeline.ts';
 import { extractObjects, extractLogic } from '../packages/runner/src/extraction.ts';
+import { createModelExtractors } from '../packages/runner/src/model-extraction.ts';
 import { readConfig } from '../apps/api/src/config.ts';
 import { createStore } from '../apps/api/src/store.ts';
 
@@ -30,7 +31,9 @@ try {
   if (comparison) {
     await executeRepositoryReview(run, store, comparison, {
       daytona: config.daytona,
-      extractors: { method: 'static-analysis', objects: extractObjects, logic: extractLogic },
+      extractors: config.extraction.mode === 'openai'
+        ? createModelExtractors(config.openai!)
+        : { method: 'static-analysis', objects: extractObjects, logic: extractLogic },
       trigger: process.env.GITHUB_ACTIONS === 'true' ? {
         kind: 'github',
         url: `https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,

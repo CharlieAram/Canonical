@@ -13,6 +13,9 @@ const EnvSchema = z.object({
   DAYTONA_API_KEY: z.string().optional(),
   DAYTONA_API_URL: z.string().url().optional(),
   DAYTONA_SNAPSHOT: z.string().optional(),
+  CANONICAL_EXTRACTION: z.enum(['auto', 'static', 'openai']).default('auto'),
+  OPENAI_API_KEY: z.string().trim().optional().transform(value => value || undefined),
+  OPENAI_MODEL: z.string().trim().min(1).default('gpt-5.4-mini'),
 });
 
 export function readConfig(env: NodeJS.ProcessEnv = process.env) {
@@ -22,10 +25,18 @@ export function readConfig(env: NodeJS.ProcessEnv = process.env) {
     throw new Error(`Invalid configuration: ${parsed.error.issues.map(issue => issue.path.join('.')).join(', ')}`);
   }
   const config = parsed.data;
+  if (config.CANONICAL_EXTRACTION === 'openai' && !config.OPENAI_API_KEY) {
+    throw new Error('Invalid configuration: OPENAI_API_KEY is required when CANONICAL_EXTRACTION=openai');
+  }
+  const extractionMode: 'static' | 'openai' = config.CANONICAL_EXTRACTION === 'auto'
+    ? config.OPENAI_API_KEY ? 'openai' : 'static'
+    : config.CANONICAL_EXTRACTION;
   return {
     port: config.PORT,
     host: config.HOST,
     storage: config.CANONICAL_STORE,
+    extraction: { mode: extractionMode },
+    openai: config.OPENAI_API_KEY ? { apiKey: config.OPENAI_API_KEY, model: config.OPENAI_MODEL } : undefined,
     surreal: {
       url: config.SURREAL_URL,
       namespace: config.SURREAL_NAMESPACE,

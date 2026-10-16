@@ -15,7 +15,7 @@ A browser left open before the repair push discovered the new review and display
 its progress without a refresh or import. Object extraction resolves the cache key
 as `sku` for the regression and `JSON.stringify([account, sku])` for the repair.
 Both layers retain source citations with exact commit SHAs. The normal test/build
-check passes 64 tests. These are static-analysis workers, not model-backed agents.
+check passes 64 tests. These original verification runs used static-analysis workers. Model-backed extraction is now available; see [model configuration](MODEL_EXTRACTION.md).
 
 ## Wire the shared database
 
@@ -31,6 +31,7 @@ On `CharlieAram/CanonicalTestbed`, configure these encrypted Actions secrets:
 | Secret | Purpose |
 | --- | --- |
 | `DAYTONA_API_KEY` | Creates separate execution sandboxes |
+| `OPENAI_API_KEY` | Runs the two model extraction agents when `CANONICAL_EXTRACTION=openai` |
 | `SURREAL_URL` | Database connection endpoint; use the Cloud TLS endpoint |
 | `SURREAL_NAMESPACE` | The same namespace selected by the API |
 | `SURREAL_DATABASE` | The same database selected by the API |

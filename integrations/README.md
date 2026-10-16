@@ -80,3 +80,12 @@ quotes come from graph traversal through `getRequirementProvenance`, while run
 execution evidence remains unchanged. The context integration test exercises
 transaction rollback, competing writers, and isolated citation paths. See
 [transcript review](../docs/TRANSCRIPT_CONTEXT.md) for setup and test commands.
+
+## OpenAI extraction
+
+[openai.ts](openai.ts) contains the provider HTTP boundary. It calls the Responses
+API with a strict JSON schema, `store:false`, a bounded deadline and output size,
+and safe errors. [model-extraction.ts](../packages/runner/src/model-extraction.ts)
+validates revision-specific source references and builds actual citations from
+parser output. Model interpretations remain separate from executed business
+verdicts. See [configuration and evidence metadata](../docs/MODEL_EXTRACTION.md).

@@ -1,3 +1,4 @@
+import { OpenAIRequestError } from '@canonical/integrations/openai';
 import {
   LayerDiffSchema, type AnalysisRun, type Review, type ReviewAgent, type LayerDiff,
   type RevisionSource, type RunStore,
@@ -64,7 +65,9 @@ export async function executeRepositoryReview(
   run.status = 'running'; run.stage = 'Extracting object layer and logic flow';
   await persist(run.stage);
   const layers = await Promise.allSettled((['objects', 'logic'] as const).map(async id => {
-    updateAgent(id, 'running', 'Reading both immutable Git revisions');
+    updateAgent(id, 'running', options.extractors.method === 'model'
+      ? 'Model is analyzing verified source from both Git revisions'
+      : 'Reading both immutable Git revisions');
     await persist(`${id} extraction started`, id);
     try {
       const layer = LayerDiffSchema.parse(await options.extractors[id](comparison.sources.baseline, comparison.sources.candidate));
@@ -72,7 +75,9 @@ export async function executeRepositoryReview(
       updateAgent(id, 'completed', layer.summary);
       await persist(`${id} extraction completed`, id);
     } catch (error) {
-      updateAgent(id, 'error', 'Extraction could not complete. Check runner configuration.');
+      updateAgent(id, 'error', error instanceof OpenAIRequestError
+        ? error.message
+        : 'Extraction could not complete. Check runner configuration.');
       await persist(`${id} extraction failed`, id);
       throw error;
     }

@@ -105,9 +105,11 @@ in Daytona. Each task publishes its real status and source-cited results to the
 shared SurrealDB instance. The API streams those updates through `/api/events`;
 the UI discovers CI-created runs automatically and displays both layer diffs.
 
-Extraction currently uses the TypeScript compiler's AST parser and is labeled
-**static analysis**. It supports the prepared `src/pricing.mjs` service; it does
-not claim general repository understanding or LLM inference. The bill's checkmarks
+With `OPENAI_API_KEY` configured, independent OpenAI calls infer the object and
+logic layers from verified AST facts. Reports label those layers **model inference**
+and retain provider response IDs. `CANONICAL_EXTRACTION=static` explicitly selects
+the parser-only path. Both support the prepared `src/pricing.mjs` service; neither
+claims general repository coverage. See [model extraction setup](docs/MODEL_EXTRACTION.md). The bill's checkmarks
 and crosses come exclusively from executed baseline/candidate checks; pending
 and execution errors stay distinct. See [the push demo guide](docs/PUSH_DEMO.md).
 

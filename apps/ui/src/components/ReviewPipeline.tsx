@@ -52,7 +52,7 @@ export function LayerDiffView({ layer, title }: { layer?: LayerDiff; title: stri
       ?? (!before ? 'added' : !after ? 'removed' : 'unchanged');
   }
   return <section className="panel" aria-label={title}>
-    <div className="panel-head"><div><h2>{title}</h2><p>{layer.provenance === 'model-inference' ? 'Model inference · inspect source citations' : 'Static analysis · source-backed extraction'}</p></div></div>
+    <div className="panel-head"><div><h2>{title}</h2><p>{layer.provenance === 'model-inference' ? `Model inference${layer.model ? ` · ${layer.model.name}` : ''} · inspect source citations` : 'Static analysis · source-backed extraction'}</p></div></div>
     <p>{layer.summary}</p>
     {!!layer.limitations.length && <details style={{ margin: '12px 0' }}><summary>Scope and limitations</summary><ul>{layer.limitations.map((limitation, index) => <li key={index}>{limitation}</li>)}</ul></details>}
     <div className="stack">{nodeIds.map(id => {
