@@ -309,3 +309,8 @@ h3 { font-size: 13px; font-weight: 600; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .reveal, .reveal .section-body > * { opacity: 1; transform: none; filter: none; }
 }
+
+/* Read-only React Flow wrappers still contain clickable evidence buttons. */
+.react-flow__node .flow-node,
+.react-flow__node .step-card,
+.react-flow__node .object-chip { pointer-events: auto; }
