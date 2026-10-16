@@ -2,7 +2,7 @@
 
 Canonical helps people review a coding agent's changes in business terms: what changed, which business rules still hold, and what performance tradeoffs were measured. The intended product turns a commit into a business graph, executes checks in Daytona, stores its evidence in SurrealDB, and exports business context for the next coding agent.
 
-The first runnable slice uses a small pricing fixture. A cache makes repeat quotes faster but lets a retail customer receive a wholesale customer's price. The dashboard connects that failed requirement to the business graph and the measured results.
+The runnable project supports a built-in pricing fixture and real Git comparisons through Daytona. A cache makes repeat quotes faster but lets a retail customer receive a wholesale customer's price. The dashboard connects that failed requirement to the business graph and measured results. The sibling `CanonicalTestbed` repository supplies baseline, broken-cache, and corrected-cache commits for the same review loop.
 
 ## Start the local MVP
 
@@ -20,7 +20,22 @@ The baseline should pass the account-pricing check. The candidate deliberately f
 
 The default store is memory, so API restarts clear run history. [Enable Daytona and SurrealDB](integrations/README.md) when you want sandbox execution and persistent graph storage.
 
-For local SurrealDB, start Docker, run `npm run db:up`, `npm run db:init`, and `npm run db:smoke`, then set `CANONICAL_STORE=surreal` in `.env` and restart the API. Initialization is an explicit setup step for a fresh database.
+CLI and CI reports do not automatically appear in an API using memory storage. Use **Import report JSON** in the dashboard to load the generated `report.json`. Importing displays recorded evidence; it does not execute the repository again.
+
+For local SurrealDB, start Docker, run `npm run db:up`, `npm run db:init`, and `npm run db:smoke`, then set `CANONICAL_STORE=surreal` in `.env` and restart the API. Initialization is an explicit setup step for a fresh database. A hosted instance needs its database connection URL, namespace, database, username/password, and matching authentication level. An MCP server URL or Cloud management token does not configure this adapter.
+
+## Review real commits
+
+Set `DAYTONA_API_KEY` in the ignored `.env`. From this checkout, compare the sibling test repository:
+
+```sh
+npm run analyze -- --execution daytona --repo ../CanonicalTestbed --base main --head demo/product-cache --output .canonical/output/broken
+npm run analyze -- --execution daytona --repo ../CanonicalTestbed --base main --head demo/account-cache --output .canonical/output/fixed
+```
+
+The first command is expected to exit **1** for the cross-account pricing failure; the second should exit **0**. Run them separately so an expected failure does not stop the corrected comparison. Each output folder contains `report.json`, `context.md`, `report.md`, and a report named by its run ID. Import either `report.json` in the UI to compare its evidence.
+
+The runner resolves both refs to full SHAs, reads approved policy from the baseline commit, and checks out each exact revision in a separate Daytona sandbox. The checks come from Canonical, so candidate changes cannot replace the harness or weaken their approved baseline policy. This currently supports the small `pricing-v1` service contract, not arbitrary repository test commands. [Real repository and CI guide](docs/REAL_CI.md).
 
 ## Work independently
 
@@ -55,12 +70,16 @@ npm run analyze -- --execution local
 
 `check` runs type checking, tests, and the production UI build. The analysis CLI writes its report and business context under `.canonical/output`. It intentionally exits with status **1** when the candidate fails a business check, after saving the evidence; status **2** indicates an execution error. The pricing-cache fixture is expected to return 1.
 
-Initial verification passed 14 tests, a real Daytona baseline smoke run, and SurrealDB `3.3.0` persistence and live-notification checks. See the [integration verification notes](integrations/README.md#verification-and-dependency-notes).
+Verification passed 26 tests and the production build. An actual Git comparison in Daytona passed all baseline checks and caught the candidate's $80 retail-price regression without cleanup warnings. SurrealDB `3.3.0` checks include Git provenance persistence. Sponsor smoke tests remain explicit commands because they require configured services. See the [integration verification notes](integrations/README.md#verification-and-dependency-notes).
 
 ## What this slice proves
 
-The MVP connects a declared business map to executed checks, benchmark evidence, and a context export. It provides optional Daytona execution and SurrealDB adapters behind the same contract.
+The MVP connects a declared business map to executed checks, benchmark evidence, and a context export. It supports actual Git revisions in Daytona, report imports, and optional SurrealDB storage behind the same contract. The testbed includes a GitHub Actions workflow for unit tests and the business review; hosted execution is a separate verification step, not implied by the workflow's presence.
 
-Actual Git revision comparison, inferred business meaning, a CI trigger, signed app previews, and live database events in the browser are subsequent slices. The current graph is a **declared fixture**, not AI extraction; the browser polls pending runs. Local execution runs only the owned fixture, not arbitrary repository code.
+Inferred business meaning, signed app previews, and live database events in the browser remain subsequent slices. Graph provenance distinguishes a **declared fixture** from **declared policy** read from a Git baseline; neither claims AI extraction. The browser polls pending runs. Local execution runs only the owned fixture; repository execution requires Daytona.
+
+For business context from calls, the [meeting-context scope](docs/MEETING_CONTEXT.md) recommends transcript paste/import first and Fathom when a new listener is needed. This connection is scoped, not implemented.
 
 See [PLAN.md](PLAN.md) for the vertical-slice roadmap, [RESEARCH.md](RESEARCH.md) for the platform research, and [integrations/README.md](integrations/README.md) for SDK setup and verification.
+
+Hosted demonstration verified: [broken cache fails business review](https://github.com/CharlieAram/CanonicalTestbed/actions/runs/38941269929), while [account-scoped cache passes](https://github.com/CharlieAram/CanonicalTestbed/actions/runs/38941270563). Ordinary unit tests pass on both branches.
