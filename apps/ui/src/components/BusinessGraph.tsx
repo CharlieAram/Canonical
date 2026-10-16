@@ -11,7 +11,7 @@ export function BusinessGraph({ graph, selectedId, onSelect }: { graph: Graph; s
   }));
   const edges: Edge[] = graph.edges.map(edge => ({ ...edge, animated: edge.change === 'added', markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: edge.change === 'added' ? '#b35cf6' : '#8391a3', strokeWidth: 1.5 }, labelStyle: { fill: '#526177', fontSize: 11 } }));
   return <section className="panel graph-panel" aria-label="Business concept graph">
-    <div className="panel-heading"><div><span className="eyebrow">Intent map</span><h2>Follow the business impact</h2></div><span className="subtle-tag">Declared demo graph</span></div>
+    <div className="panel-heading"><div><span className="eyebrow">Intent map</span><h2>Follow the business impact</h2></div><span className="subtle-tag">{graph.provenance === 'declared-policy' ? 'Declared policy graph' : 'Declared demo graph'}</span></div>
     <div className="graph-canvas"><ReactFlow nodes={nodes} edges={edges} fitView fitViewOptions={{ padding: 0.18 }} onNodeClick={(_, node) => onSelect(node.id)} nodesDraggable={false} nodesConnectable={false} minZoom={0.25} maxZoom={1.5}><Background gap={22} color="#dae1ea" /><Controls showInteractive={false} /></ReactFlow></div>
     <div className="graph-footer"><span><i className="dot purple" /> Changed implementation</span><span><i className="dot red" /> Failed requirement</span><span>Select a concept to inspect its evidence</span></div>
     <div className="concept-picker" aria-label="Select business concept">{graph.nodes.map(node => <button key={node.id} className={node.id === selectedId ? 'selected' : ''} aria-pressed={node.id === selectedId} onClick={() => onSelect(node.id)}>{node.label}</button>)}</div>

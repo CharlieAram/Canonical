@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import Fastify from 'fastify';
-import { StartRunSchema, type RunStore } from '@canonical/contracts';
+import { RunSchema, StartRunSchema, type RunStore } from '@canonical/contracts';
 import { createRun } from '@canonical/demo';
 import { createEvaluator, executeRun, exportContext, type Evaluator } from '@canonical/runner';
 import type { DaytonaConfig } from '@canonical/integrations/daytona';
@@ -15,6 +15,7 @@ export function buildApp({ store, daytona, evaluate }: AppOptions) {
   const app = Fastify({ logger: true, bodyLimit: 16_384 });
   let busy = false;
   let activeJob: Promise<unknown> | undefined;
+  const importing = new Set<string>();
 
   app.get('/api/health', async () => ({
     status: 'ok', storage: store.kind,
@@ -22,6 +23,25 @@ export function buildApp({ store, daytona, evaluate }: AppOptions) {
   }));
 
   app.get('/api/runs', async () => ({ runs: await store.list() }));
+
+  // CLI/CI reports enter the same history as interactive runs. Import only terminal
+  // snapshots; this endpoint never executes repository code or accepts shell input.
+  app.post('/api/runs/import', { bodyLimit: 1024 * 1024 }, async (request, reply) => {
+    const parsed = RunSchema.safeParse(request.body);
+    if (!parsed.success || !['completed', 'error'].includes(parsed.data.status)) {
+      return reply.code(400).send({ error: 'Expected a valid completed or error analysis report.' });
+    }
+    const run = parsed.data;
+    if (importing.has(run.id)) return reply.code(409).send({ error: 'A run with this ID already exists or is being imported.' });
+    importing.add(run.id);
+    try {
+      if (await store.get(run.id)) return reply.code(409).send({ error: 'A run with this ID already exists.' });
+      await store.save(run);
+      return reply.code(201).send(run);
+    } finally {
+      importing.delete(run.id);
+    }
+  });
 
   app.post('/api/runs', async (request, reply) => {
     const parsed = StartRunSchema.safeParse(request.body);

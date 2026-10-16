@@ -20,13 +20,21 @@ test('SurrealDB persists graph evidence, isolates traversals, and emits live cha
   });
   const store = createSurrealStore(db);
   const run = createRun(`integration-${randomUUID()}`, 'local');
-  const other = createRun(`integration-${randomUUID()}`, 'local');
+  const other = createRun(`integration-${randomUUID()}`, 'daytona');
+  other.source = {
+    kind: 'git', name: 'test-repository', baseline: 'aaaaaaaa', candidate: 'bbbbbbbb',
+    baseSha: 'a'.repeat(40), headSha: 'b'.repeat(40), changedFiles: ['src/pricing.mjs'],
+    policyPath: '.canonical/business.json',
+  };
+  other.graph.provenance = 'declared-policy';
   let stopWatching: (() => Promise<unknown>) | undefined;
   let notificationTimeout: ReturnType<typeof setTimeout> | undefined;
   try {
     assert.equal(await store.get(run.id), undefined);
     await store.save(run);
     await store.save(other);
+    assert.deepEqual((await store.get(other.id))?.source, other.source);
+    assert.equal((await store.get(other.id))?.graph.provenance, 'declared-policy');
     const restored = await store.get(run.id);
     assert.ok(restored);
     assert.deepEqual(restored.requirements, run.requirements);

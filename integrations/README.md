@@ -4,7 +4,7 @@ The server owns service credentials. The UI imports the shared contract and call
 
 | File | Responsibility |
 |---|---|
-| [daytona.ts](daytona.ts) | Create a sandbox, upload the trusted fixture, execute and validate JSON evidence, clean up |
+| [daytona.ts](daytona.ts) | Create a sandbox, upload fixture or Git bundle, verify revision, execute trusted checks, clean up |
 | [surrealdb.ts](surrealdb.ts) | Initialize the database explicitly, connect, save/load runs and native relations, traverse concepts, subscribe to run changes |
 | [schema.surql](schema.surql) | Application schema |
 
@@ -21,7 +21,7 @@ npm run analyze -- --execution daytona
 
 The adapter uses `Daytona`, `create`, `sandbox.fs.uploadFile`, `sandbox.process.executeCommand`, and `delete`. It uploads the same owned fixture and trusted harness used locally. Validated results include the sandbox ID; cleanup runs in `finally`, with sandbox TTL as a fallback. The CLI saves the failed candidate's report before returning its nonzero business-check status.
 
-This slice does not clone Git revisions or start an app preview. Those belong to the next execution slice. Keep future untrusted repository execution inside the sandbox and keep database credentials in the backend.
+The repository CLI uploads a Git bundle of the requested commits, clones and checks out each exact SHA in a separate Daytona sandbox, and runs the trusted pricing harness. Requirements come from the baseline `.canonical/business.json`. App previews remain a later slice. Repository code runs inside Daytona; provider and database credentials stay in the control process. See [real CI setup](../docs/REAL_CI.md).
 
 Official references: [TypeScript SDK](https://www.daytona.io/docs/en/typescript-sdk/), [Daytona benchmark example](https://github.com/daytona/guides/tree/main/typescript/vercel-ai-sdk/multi-language-benchmark-agent).
 

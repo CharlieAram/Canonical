@@ -11,6 +11,8 @@ Open http://127.0.0.1:5173. Fixture mode is independent of the API, Daytona, and
 
 Use `npm run dev` from the root for the real local execution loop. Vite proxies `/api` to `http://127.0.0.1:3001`; select Daytona once the API reports it available. All secrets stay on the server. The normal UI never silently falls back to synthetic data.
 
+Use **Import report JSON** to load a Canonical `report.json` produced by the CLI or downloaded from a CI artifact. The UI validates the report with `RunSchema`, saves it through the backend, refreshes history, and selects it. Importing displays recorded evidence; it does not rerun the repository. Git reports show the full baseline/candidate SHAs, changed files, and declared policy path. The evaluation button still starts the pricing fixture and is labeled accordingly when a Git report is selected. Report import is unavailable in standalone fixture mode.
+
 ## Replace these components freely
 
 - `src/App.tsx`: workspace layout, run selection, polling and actions.
@@ -29,6 +31,7 @@ The backend/UI contract is `packages/contracts/src/index.ts`. Use those types, w
 | `GET /api/health` | `Health` |
 | `GET /api/runs` | `{ runs: AnalysisRun[] }` |
 | `POST /api/runs` | `AnalysisRun` (202); body `{ execution, scenario: 'pricing-cache' }` |
+| `POST /api/runs/import` | `AnalysisRun` (201); body is a completed/error Canonical report, maximum 1 MiB; duplicate run IDs return 409 |
 | `GET /api/runs/:id` | `AnalysisRun` |
 | `GET /api/runs/:id/context` | Markdown text |
 

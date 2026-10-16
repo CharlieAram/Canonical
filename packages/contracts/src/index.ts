@@ -21,7 +21,7 @@ export const RelationshipSchema = z.object({
   change: z.enum(['unchanged', 'modified', 'added']),
 });
 export const GraphSchema = z.object({
-  provenance: z.literal('declared-fixture'),
+  provenance: z.enum(['declared-fixture', 'declared-policy']),
   nodes: z.array(ConceptSchema),
   edges: z.array(RelationshipSchema),
 });
@@ -46,6 +46,7 @@ export const EvaluationSchema = z.object({
   }),
   runtime: z.string(),
   sandboxId: z.string().optional(),
+  commitSha: z.string().regex(/^[a-f0-9]{40}$/).optional(),
   warnings: z.array(z.string()).default([]),
 });
 export const RunSchema = z.object({
@@ -55,12 +56,14 @@ export const RunSchema = z.object({
   execution: ExecutionModeSchema,
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-  source: z.object({
-    kind: z.literal('fixture'),
-    name: z.string(),
-    baseline: z.string(),
-    candidate: z.string(),
-  }),
+  source: z.discriminatedUnion('kind', [
+    z.object({ kind: z.literal('fixture'), name: z.string(), baseline: z.string(), candidate: z.string() }),
+    z.object({
+      kind: z.literal('git'), name: z.string(), baseline: z.string(), candidate: z.string(),
+      baseSha: z.string().regex(/^[a-f0-9]{40}$/), headSha: z.string().regex(/^[a-f0-9]{40}$/),
+      changedFiles: z.array(z.string()), policyPath: z.literal('.canonical/business.json'),
+    }),
+  ]),
   graph: GraphSchema,
   requirements: z.array(RequirementSchema),
   results: z.array(EvaluationSchema),

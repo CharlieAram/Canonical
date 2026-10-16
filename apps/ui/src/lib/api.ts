@@ -44,6 +44,17 @@ export const api = {
       body: JSON.stringify({ execution, scenario: 'pricing-cache' }),
     })).json());
   },
+  async importRun(report: unknown): Promise<AnalysisRun> {
+    const parsed = RunSchema.safeParse(report);
+    if (!parsed.success) throw new Error('This JSON does not match a Canonical report. Choose report.json from the analysis output.');
+    const run = parsed.data;
+    if (run.status !== 'completed' && run.status !== 'error') throw new Error('Only completed or error reports can be imported. Wait for the analysis to finish.');
+    if (isFixture) throw new Error('Report import requires the backend. Start the app with npm run dev.');
+    return RunSchema.parse(await (await request('/runs/import', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(run),
+    })).json());
+  },
   async context(id: string): Promise<string> {
     if (isFixture) {
       const run = await this.getRun(id);

@@ -95,3 +95,45 @@ test('context export ties approved requirements to failed evidence and fixture p
   assert.match(context, /simulated upstream/);
   assert.match(context, /node checks\/pricing\.mjs candidate/);
 });
+
+test('Git execution requires evidence to identify the exact requested commit for each variant', async t => {
+  const baseSha = 'a'.repeat(40);
+  const headSha = 'b'.repeat(40);
+  const gitRun = () => {
+    const run = createRun(randomUUID(), 'daytona');
+    run.source = {
+      kind: 'git', name: 'CanonicalTestbed', baseline: 'main', candidate: 'demo/product-cache',
+      baseSha, headSha, changedFiles: ['src/pricing.mjs'], policyPath: '.canonical/business.json',
+    };
+    run.graph.provenance = 'declared-policy';
+    return run;
+  };
+  for (const invalidVariant of ['baseline', 'candidate'] as const) {
+    for (const invalidSha of [undefined, 'c'.repeat(40)]) {
+      await t.test(`${invalidVariant} ${invalidSha ? 'mismatched' : 'missing'} SHA rejects evidence`, async () => {
+        const fixture = createUiFixture();
+        const { store } = recordingStore();
+        const run = await executeRun(gitRun(), store, async variant => ({
+          ...fixture.results.find(result => result.variant === variant)!,
+          commitSha: variant === invalidVariant ? invalidSha : variant === 'baseline' ? baseSha : headSha,
+        }));
+        assert.equal(run.status, 'error');
+        assert.match(run.error ?? '', /wrong Git commit/);
+        assert.equal(run.results.length, invalidVariant === 'baseline' ? 0 : 1);
+        if (invalidVariant === 'candidate') assert.equal(run.results[0].commitSha, baseSha);
+        assert.equal((await store.get(run.id))?.status, 'error');
+      });
+    }
+  }
+  await t.test('exact commit evidence completes a review and retains both identifiers', async () => {
+    const fixture = createUiFixture();
+    const { store } = recordingStore();
+    const run = await executeRun(gitRun(), store, async variant => ({
+      ...fixture.results.find(result => result.variant === variant)!,
+      commitSha: variant === 'baseline' ? baseSha : headSha,
+    }));
+    assert.equal(run.status, 'completed');
+    assert.deepEqual(run.results.map(result => result.commitSha), [baseSha, headSha]);
+    assert.equal(run.results[1].checks[0].status, 'failed');
+  });
+});

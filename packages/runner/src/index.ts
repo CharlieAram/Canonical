@@ -8,6 +8,7 @@ export { evaluateLocally } from './local.ts';
 export type Evaluator = (variant: Variant) => Promise<Evaluation>;
 
 export function createEvaluator(run: AnalysisRun, daytona?: DaytonaConfig): Evaluator {
+  if (run.source.kind === 'git') throw new Error('Git runs require a prepared repository evaluator');
   if (run.execution === 'local') return evaluateLocally;
   if (!daytona?.apiKey) throw new Error('Daytona is not configured');
   return variant => evaluateWithDaytona(variant, daytona);
@@ -25,6 +26,9 @@ export async function executeRun(run: AnalysisRun, store: RunStore, evaluate: Ev
       await save();
       const result = EvaluationSchema.parse(await evaluate(variant));
       if (result.variant !== variant) throw new Error('Harness returned the wrong variant');
+      if (run.source.kind === 'git' && result.commitSha !== (variant === 'baseline' ? run.source.baseSha : run.source.headSha)) {
+        throw new Error('Harness returned evidence for the wrong Git commit');
+      }
       const ids = result.checks.map(check => check.requirementId);
       if (ids.length !== run.requirements.length || new Set(ids).size !== ids.length || run.requirements.some(rule => !ids.includes(rule.id))) {
         throw new Error('Harness did not return every approved requirement exactly once');
@@ -50,3 +54,6 @@ export async function executeRun(run: AnalysisRun, store: RunStore, evaluate: Ev
   await save();
   return run;
 }
+
+export { prepareRepositoryComparison } from './repository.ts';
+export { createRepositoryRun } from './repository-run.ts';

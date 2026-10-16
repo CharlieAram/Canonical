@@ -2,7 +2,7 @@
 
 Based on [README.md](README.md), with platform and library research checked on October 16, 2026. Detailed sources and alternatives are in [RESEARCH.md](RESEARCH.md).
 
-This is the product roadmap. The runnable skeleton starts with the declared-fixture v0 described in [README.md](README.md); Git comparison, inference, CI triggering, and live browser delivery remain later slices.
+This is the product roadmap. The runnable app includes the declared-fixture v0 and exact Git comparison through Daytona, with CI artifact export and dashboard report import. Inference and live browser delivery remain later slices. See [the real CI guide](docs/REAL_CI.md) for the implemented path.
 
 **Build a business-level commit review with executable evidence.** The demo should show an optimization that makes price quotes faster while accidentally giving one customer another customer's price. Canonical makes that tradeoff visible, reproduces the failure in Daytona, and exports the business context for the next coding agent.
 
@@ -24,7 +24,7 @@ Use these explicit fixture facts:
 - Wholesale account Alpha pays $80 for the demo product.
 - Retail account Beta pays $100 for that product.
 - An approved requirement says a quote must use the requesting account's price.
-- A local stub represents the upstream pricing service, with a documented fixed 40 ms delay. Both revisions use exactly the same stub. Timing is a real measurement of this synthetic workload; it is not a production performance claim.
+- A local stub represents the upstream pricing service, with a documented fixed 15 ms delay. Both revisions use exactly the same stub. Timing is a real measurement of this synthetic workload; it is not a production performance claim.
 - A repeat-quote benchmark makes the caching benefit visible. A separate cross-account test reveals the bug.
 
 The dashboard should tell a nontechnical person: **“Repeat quotes got faster. Retail customers can now receive wholesale prices. One required business check failed.”** Substitute actual measured timing into the report. Do not invent an improvement percentage in advance.
@@ -110,7 +110,7 @@ Avoid a monorepo framework: a few npm workspaces or a single package with direct
 
 Separate **business intent**, **observed implementation**, and **execution evidence**. The candidate commit is allowed to change implementation; it must not silently redefine what counts as correct.
 
-1. Put the approved glossary and three requirements in `.canonical/requirements.json`. These are explicit product inputs, not claimed AI discoveries.
+1. Put the approved glossary and three requirements in `.canonical/business.json`. These are explicit product inputs, not claimed AI discoveries.
 2. Parse the small TypeScript service using `ts-morph`: exported functions, parameters, imports, call sites, source ranges, and changed lines. Limit support to ordinary functions and statically resolvable calls.
 3. Give one bounded LLM request the glossary, extracted facts, relevant source, and Git diff. Request structured mappings to business concepts and a short behavioral explanation. Use another bounded request for baseline onboarding if needed.
 4. Validate the output with Zod. Require every code claim to reference an existing file, symbol, and in-bounds source range. A valid citation establishes location, not semantic correctness; preserve the “inferred” label until execution supports the claim.

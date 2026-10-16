@@ -50,17 +50,17 @@ export async function connectSurreal(config: SurrealConfig): Promise<Surreal> {
 }
 
 type RunData = Omit<AnalysisRun, 'graph'>;
-type StoredRun = { data: RunData };
+type StoredRun = { data: RunData; provenance?: Graph['provenance'] };
 
 export function createSurrealStore(db: Surreal): RunStore {
   return {
     kind: 'surreal',
     async save(run) {
       const { graph, ...data } = RunSchema.parse(run);
-      const bindings: Record<string, unknown> = { record: new RecordId('analysis_run', run.id), data, runId: run.id };
+      const bindings: Record<string, unknown> = { record: new RecordId('analysis_run', run.id), data, provenance: graph.provenance, runId: run.id };
       const statements = [
         'BEGIN TRANSACTION;',
-        'UPSERT $record CONTENT { data: $data };',
+        'UPSERT $record CONTENT { data: $data, provenance: $provenance };',
         'DELETE depends_on WHERE runId = $runId;',
         'DELETE concept WHERE runId = $runId;',
       ];
@@ -81,11 +81,11 @@ export function createSurrealStore(db: Surreal): RunStore {
     },
     async get(id) {
       const [rows, nodes, edges] = await db.query<[StoredRun[], { data: Graph['nodes'][number] }[], { data: Graph['edges'][number] }[]]>(
-        'SELECT data FROM $record; SELECT data FROM concept WHERE runId = $runId; SELECT data FROM depends_on WHERE runId = $runId;',
+        'SELECT data, provenance FROM $record; SELECT data FROM concept WHERE runId = $runId; SELECT data FROM depends_on WHERE runId = $runId;',
         { record: new RecordId('analysis_run', id), runId: id },
       );
       if (!rows[0]) return undefined;
-      return RunSchema.parse({ ...rows[0].data, graph: { provenance: 'declared-fixture', nodes: nodes.map(row => row.data), edges: edges.map(row => row.data) } });
+      return RunSchema.parse({ ...rows[0].data, graph: { provenance: rows[0].provenance ?? 'declared-fixture', nodes: nodes.map(row => row.data), edges: edges.map(row => row.data) } });
     },
     async list() {
       const [rows] = await db.query<[StoredRun[]]>(
