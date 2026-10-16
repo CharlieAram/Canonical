@@ -3,7 +3,7 @@ import { mkdtemp, realpath, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
 import { promisify } from 'node:util';
-import { ConceptSchema, RelationshipSchema, RequirementSchema } from '@canonical/contracts';
+import { ConceptSchema, RelationshipSchema, RequirementSchema, type RevisionSource } from '@canonical/contracts';
 
 const exec = promisify(execFile);
 const fullSha = /^[a-f0-9]{40}$/;
@@ -26,14 +26,15 @@ export interface PreparedRepositoryComparison {
   changedFiles: string[];
   policy: RepositoryPolicy;
   bundlePath: string;
+  sources: { baseline: RevisionSource; candidate: RevisionSource };
   dispose(): Promise<void>;
 }
 
-async function git(cwd: string, args: string[]) {
+async function git(cwd: string, args: string[], raw = false) {
   const { stdout } = await exec('git', ['--no-optional-locks', '-C', cwd, ...args], {
     timeout: 30_000, maxBuffer: 4 * 1024 * 1024,
   });
-  return stdout.trim();
+  return raw ? stdout : stdout.trim();
 }
 
 function parsePolicy(contents: string): RepositoryPolicy {
@@ -79,6 +80,15 @@ export async function prepareRepositoryComparison(
       throw new Error('Each revision must contain a regular src/pricing.mjs file');
     }
   }
+  const path = 'src/pricing.mjs';
+  const [baselineContent, candidateContent] = await Promise.all([
+    git(repositoryPath, ['show', `${baseSha}:${path}`], true),
+    git(repositoryPath, ['show', `${headSha}:${path}`], true),
+  ]);
+  const sources = {
+    baseline: { sha: baseSha, path, content: baselineContent },
+    candidate: { sha: headSha, path, content: candidateContent },
+  };
   const changedFiles = (await git(repositoryPath, ['diff', '--name-only', '-z', baseSha, headSha, '--']))
     .split('\0').filter(Boolean);
   const directory = await mkdtemp(join(tmpdir(), 'canonical-comparison-'));
@@ -92,7 +102,7 @@ export async function prepareRepositoryComparison(
       `${baseSha}:refs/heads/baseline`, `${headSha}:refs/heads/candidate`]);
     await git(bare, ['bundle', 'create', bundlePath, '--branches']);
     return {
-      baseSha, headSha, repositoryName: basename(repositoryPath), changedFiles, policy, bundlePath,
+      baseSha, headSha, repositoryName: basename(repositoryPath), changedFiles, policy, bundlePath, sources,
       dispose: () => rm(directory, { recursive: true, force: true }),
     };
   } catch (error) {

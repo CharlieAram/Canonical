@@ -96,3 +96,17 @@ This is manual citation review. Context added after execution does not change th
 original policy or CI outcome. SurrealDB stores the provenance as native graph
 relationships when configured; memory mode works without credentials.
 See [the transcript review guide](docs/TRANSCRIPT_CONTEXT.md).
+
+## Push-driven commit review
+
+The live review pipeline reads exact Git revisions, runs independent object-layer
+and logic-flow extraction tasks, and then executes the approved bill of business
+in Daytona. Each task publishes its real status and source-cited results to the
+shared SurrealDB instance. The API streams those updates through `/api/events`;
+the UI discovers CI-created runs automatically and displays both layer diffs.
+
+Extraction currently uses the TypeScript compiler's AST parser and is labeled
+**static analysis**. It supports the prepared `src/pricing.mjs` service; it does
+not claim general repository understanding or LLM inference. The bill's checkmarks
+and crosses come exclusively from executed baseline/candidate checks; pending
+and execution errors stay distinct. See [the push demo guide](docs/PUSH_DEMO.md).

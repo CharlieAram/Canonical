@@ -1,3 +1,5 @@
+import { ReviewSchema } from './review.ts';
+export * from './review.ts';
 import type { ContextStore } from './context.ts';
 export * from './context.ts';
 import { z } from 'zod';
@@ -66,6 +68,7 @@ export const RunSchema = z.object({
       changedFiles: z.array(z.string()), policyPath: z.literal('.canonical/business.json'),
     }),
   ]),
+  review: ReviewSchema.optional(),
   graph: GraphSchema,
   requirements: z.array(RequirementSchema),
   results: z.array(EvaluationSchema),
@@ -93,5 +96,6 @@ export interface RunStore {
   save(run: AnalysisRun): Promise<void>;
   get(id: string): Promise<AnalysisRun | undefined>;
   list(): Promise<AnalysisRun[]>;
+  subscribe?(onChange: () => void): Promise<() => Promise<void>>;
   close(): Promise<void>;
 }

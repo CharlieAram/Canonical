@@ -98,6 +98,10 @@ export function createSurrealStore(db: Surreal): RunStore {
       const runs = await Promise.all(rows.map(row => this.get(row.data.id)));
       return runs.filter((run): run is AnalysisRun => run !== undefined);
     },
+    async subscribe(onChange) {
+      const unsubscribe = await watchRuns(db, onChange);
+      return async () => { await unsubscribe(); };
+    },
     async close() { await db.close(); },
   };
 }
@@ -111,8 +115,8 @@ export async function getDownstreamConcepts(db: Surreal, runId: string, conceptI
   return rows;
 }
 
-// Subscribe on the server, then refetch authoritative state. This is not wired to
-// the v0 browser yet: its API client polls pending runs and remains SDK-independent.
+// Server-side live notifications trigger authoritative snapshots through /api/events.
+// The browser remains independent of database credentials and SDK types.
 export async function watchRuns(db: Surreal, onChange: () => void) {
   const live = await db.live(new Table('analysis_run'));
   live.subscribe(() => onChange());

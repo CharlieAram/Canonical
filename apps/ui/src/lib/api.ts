@@ -19,6 +19,18 @@ async function request(path: string, init?: RequestInit): Promise<Response> {
 }
 
 export const api = {
+  subscribeRuns(onRuns: (runs: AnalysisRun[]) => void, onError: (message: string) => void): () => void {
+    if (isFixture) return () => {};
+    const stream = new EventSource('/api/events');
+    stream.addEventListener('runs', event => {
+      try {
+        const data = JSON.parse((event as MessageEvent).data);
+        onRuns(RunSchema.array().parse(data.runs));
+      } catch { onError('Live review data could not be read. Reconnecting will refresh the current state.'); }
+    });
+    stream.addEventListener('error', () => onError('Live updates are reconnecting. Existing review evidence remains available.'));
+    return () => stream.close();
+  },
   async businessContext(id: string, signal?: AbortSignal): Promise<ContextWorkspace> {
     if (isFixture) return fixtureWorkspace(id);
     return ContextWorkspaceSchema.parse(await (await request(`/runs/${encodeURIComponent(id)}/business-context`, { signal })).json());

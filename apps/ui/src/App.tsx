@@ -1,18 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import type { AnalysisRun, ContextWorkspace, ExecutionMode, Health } from '@canonical/contracts';
 import { api, isFixture } from './lib/api';
+import { mergeRunSnapshots, newlyDiscoveredRun } from './lib/run-state';
 import { requirementStatuses, timeAgo, verdict } from './lib/verdict';
 import { BusinessGraph } from './components/BusinessGraph';
 import { EvidencePanel } from './components/EvidencePanel';
 import { RequirementsPanel } from './components/RequirementsPanel';
 import { RevisionPanel } from './components/RevisionPanel';
 import { RunSummary } from './components/RunSummary';
+import { ReviewPipeline, LayerDiffView, BillOfBusiness } from './components/ReviewPipeline';
 import { BusinessContextPanel } from './components/BusinessContextPanel';
 
 const message = (error: unknown) => error instanceof Error ? error.message : String(error);
 const active = (run?: AnalysisRun) => run?.status === 'running' || run?.status === 'queued';
-type Tab = 'flow' | 'requirements' | 'context' | 'diff';
-const tabs: { id: Tab; label: string }[] = [{ id: 'flow', label: 'Logic flow' }, { id: 'requirements', label: 'Requirements and performance' }, { id: 'context', label: 'Business context' }, { id: 'diff', label: 'Code diff' }];
+type Tab = 'objects' | 'flow' | 'requirements' | 'context' | 'diff';
+const tabs: { id: Tab; label: string }[] = [{ id: 'objects', label: 'Object layer' }, { id: 'flow', label: 'Logic flow' }, { id: 'requirements', label: 'Bill of business' }, { id: 'context', label: 'Business context' }, { id: 'diff', label: 'Code diff' }];
 const Icon = ({ d }: { d: string }) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg>;
 const icons = {
   review: 'M3 12h5m8 0h5M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z',
@@ -24,6 +26,8 @@ const icons = {
 export function App() {
   const [health, setHealth] = useState<Health>();
   const [runs, setRuns] = useState<AnalysisRun[]>([]);
+  const runsRef = useRef<AnalysisRun[]>([]);
+  const seenRunIds = useRef(new Set<string>());
   const [selectedId, setSelectedId] = useState('');
   const [conceptId, setConceptId] = useState('quote');
   const [execution, setExecution] = useState<ExecutionMode>('local');
@@ -41,6 +45,12 @@ export function App() {
   const [historyOpen, setHistoryOpen] = useState(false);
   const selected = runs.find(run => run.id === selectedId);
   const projectName = selected?.source.kind === 'git' ? selected.source.name : 'Quote shop';
+  function applyRuns(incoming: AnalysisRun[]) {
+    const merged = mergeRunSnapshots(runsRef.current, incoming);
+    runsRef.current = merged;
+    setRuns(merged);
+    return merged;
+  }
 
   useEffect(() => {
     const controller = new AbortController();
@@ -49,37 +59,31 @@ export function App() {
     Promise.all([api.health(controller.signal), api.listRuns(controller.signal)]).then(([nextHealth, nextRuns]) => {
       if (controller.signal.aborted) return;
       setHealth(nextHealth);
-      setRuns(nextRuns);
-      setSelectedId(current => nextRuns.some(run => run.id === current) ? current : nextRuns[0]?.id ?? '');
+      const merged = applyRuns(nextRuns);
+      newlyDiscoveredRun(merged, seenRunIds.current);
+      setSelectedId(current => merged.some(run => run.id === current) ? current : merged[0]?.id ?? '');
     }).catch(error => { if (!controller.signal.aborted) setError(message(error)); }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
   }, [retry]);
 
-  // Keep tracking execution even while an older report is selected.
-  const pendingRunId = runs.find(active)?.id;
+  // SurrealDB-backed snapshots discover CI-created runs, including runs this
+  // browser did not start. EventSource reconnects and the server resynchronizes.
   useEffect(() => {
-    setPollingError('');
-    if (!pendingRunId) return;
-    const controller = new AbortController();
-    let timer: ReturnType<typeof setTimeout>;
-    async function poll() {
-      try {
-        const run = await api.getRun(pendingRunId!, controller.signal);
-        if (controller.signal.aborted) return;
-        setPollingError('');
-        setRuns(current => current.map(item => item.id === run.id ? run : item));
-        if (active(run)) timer = setTimeout(poll, 1000);
-      } catch (error) {
-        if (!controller.signal.aborted) { setPollingError(message(error)); timer = setTimeout(poll, 3000); }
-      }
-    }
-    void poll();
-    return () => { controller.abort(); clearTimeout(timer); };
-  }, [pendingRunId]);
+    if (!health || isFixture) return;
+    return api.subscribeRuns(nextRuns => {
+      const merged = applyRuns(nextRuns);
+      const arrival = newlyDiscoveredRun(merged, seenRunIds.current);
+      setPollingError('');
+      setSelectedId(current => arrival?.id ?? (merged.some(run => run.id === current) ? current : merged[0]?.id ?? ''));
+      if (arrival) setConceptId(arrival.graph.nodes.some(node => node.id === 'quote') ? 'quote' : arrival.graph.nodes[0]?.id ?? '');
+    }, setPollingError);
+    // The subscription owns current snapshots; only restart when the API changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [health]);
 
   async function start() {
     setStarting(true); setError(''); setImportNotice('');
-    try { const run = await api.startRun(execution); setRuns(current => [run, ...current.filter(item => item.id !== run.id)]); setSelectedId(run.id); setConceptId('quote'); }
+    try { const run = await api.startRun(execution); applyRuns([run]); seenRunIds.current.add(run.id); setSelectedId(run.id); setConceptId('quote'); }
     catch (error) { setError(message(error)); }
     finally { setStarting(false); }
   }
@@ -92,13 +96,14 @@ export function App() {
       try { report = JSON.parse(await file.text()); }
       catch { throw new Error('This file is not valid JSON. Choose the report.json produced by Canonical.'); }
       const run = await api.importRun(report);
-      setRuns(current => [run, ...current.filter(item => item.id !== run.id)]);
+      applyRuns([run]); seenRunIds.current.add(run.id);
       setSelectedId(run.id);
       setConceptId(run.graph.nodes.some(node => node.id === 'quote') ? 'quote' : run.graph.nodes[0]?.id ?? '');
       setImportNotice(`Imported ${file.name}. Showing its recorded results; importing does not execute code.`);
       try {
         const nextRuns = await api.listRuns();
-        setRuns([run, ...nextRuns.filter(item => item.id !== run.id)]);
+        const merged = applyRuns(nextRuns);
+        newlyDiscoveredRun(merged, seenRunIds.current);
       } catch { setImportNotice(`Imported ${file.name}. Run history could not refresh; the imported report is available below.`); }
     } catch (error) { setError(message(error)); }
     finally {
@@ -185,10 +190,12 @@ export function App() {
       {loading && !selected ? <div className="panel empty-state" role="status"><span className="kicker">Connecting</span><h2>Loading your workspace…</h2><div className="skeleton" /><div className="skeleton short" /></div>
       : selected ? <>
         <RunSummary run={selected} />
+        <ReviewPipeline run={selected} />
         <div className="segmented tabs" role="tablist" aria-label="Review views" onKeyDown={onTabKey}>{tabs.map(item => <button key={item.id} id={`tab-${item.id}`} role="tab" aria-selected={tab === item.id} aria-controls={`panel-${item.id}`} tabIndex={tab === item.id ? 0 : -1} onClick={() => setTab(item.id)}>{item.label}</button>)}</div>
         <div id={`panel-${tab}`} role="tabpanel" aria-labelledby={`tab-${tab}`} className="tab-panel">
-          {tab === 'flow' && <><BusinessGraph graph={selected.graph} selectedId={conceptId} onSelect={setConceptId} requirements={requirementStatuses(selected)} /><div className="analysis-layout"><EvidencePanel run={selected} conceptId={conceptId} approvals={businessContext?.runId === selected.id ? businessContext.approvals : []} /><RequirementsPanel run={selected} /></div></>}
-          {tab === 'requirements' && <RequirementsPanel run={selected} wide />}
+          {tab === 'objects' && (selected.review?.objects ? <LayerDiffView layer={selected.review.objects} title="Object layer diff" /> : <section className="panel"><p>{selected.review ? 'Object extraction is pending or unavailable; inspect task status above.' : 'This older report has no extracted object layer. Push a commit using the live review workflow.'}</p></section>)}
+          {tab === 'flow' && <>{selected.review?.logic && <LayerDiffView layer={selected.review.logic} title="Logic flow diff" />}<BusinessGraph graph={selected.graph} selectedId={conceptId} onSelect={setConceptId} requirements={requirementStatuses(selected)} /><div className="analysis-layout"><EvidencePanel run={selected} conceptId={conceptId} approvals={businessContext?.runId === selected.id ? businessContext.approvals : []} /><RequirementsPanel run={selected} /></div></>}
+          {tab === 'requirements' && <><BillOfBusiness run={selected} /><RequirementsPanel run={selected} wide /></>}
           {tab === 'diff' && <RevisionPanel run={selected} />}
           {/* Kept mounted so reviewed approvals reach the evidence panel from any tab. */}
           <div hidden={tab !== 'context'}><BusinessContextPanel key={selected.id} run={selected} onChange={setBusinessContext} /></div>

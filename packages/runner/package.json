@@ -6,6 +6,7 @@
   "dependencies": {
     "@canonical/contracts": "*",
     "@canonical/demo": "*",
-    "@canonical/integrations": "*"
+    "@canonical/integrations": "*",
+    "typescript": "^5.9.0"
   }
 }

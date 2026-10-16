@@ -40,6 +40,10 @@ test('repository comparison pins commits and baseline policy without changing th
   t.after(() => prepared.dispose());
   assert.equal(prepared.baseSha, baseSha);
   assert.equal(prepared.headSha, headSha);
+  assert.deepEqual(prepared.sources, {
+    baseline: { sha: baseSha, path: 'src/pricing.mjs', content: 'export const revision = "baseline";\n' },
+    candidate: { sha: headSha, path: 'src/pricing.mjs', content: 'export const revision = "candidate";\n' },
+  });
   assert.deepEqual(prepared.policy.requirements, policy.requirements);
   assert.deepEqual(prepared.changedFiles.sort(), ['.canonical/business.json', 'src/pricing.mjs']);
   assert.equal(await git('status', '--porcelain'), statusBefore);

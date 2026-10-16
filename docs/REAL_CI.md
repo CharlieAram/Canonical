@@ -58,7 +58,7 @@ curl --fail-with-body http://127.0.0.1:3001/api/runs/import \
 
 Imports preserve the report ID, accept only completed/error reports up to 1MiB, and reject duplicate IDs with HTTP 409. The API cannot overwrite a running analysis through import. This local development endpoint is not an authenticated public CI receiver.
 
-Memory storage belongs to each process. A CLI run or GitHub Actions job does not automatically update the local API's history; import its downloaded artifact. API restarts clear imported memory reports. SurrealDB can provide shared persistence when both processes use the same database configuration. CI currently uses memory storage and artifact upload, so no database access is required in Actions.
+Memory storage belongs to each process. A CLI run or GitHub Actions job does not automatically update the local API's history; import its downloaded artifact. API restarts clear imported memory reports. SurrealDB can provide shared persistence when both processes use the same database configuration. The original artifact workflow used memory storage. The live review workflow now requires the shared SurrealDB configuration in Actions secrets and publishes progress and results directly. Artifacts remain available as a fallback. See [the push demo guide](PUSH_DEMO.md).
 
 For hosted SurrealDB, supply the database connection URL, namespace, database, username/password, and matching authentication level through the documented `SURREAL_*` variables. An MCP endpoint or a Cloud management API token is not the database login expected by this adapter. See [integration setup](../integrations/README.md).
 
@@ -70,7 +70,7 @@ The workflow checks out full history and selects exact pull-request base/head SH
 
 The credential-bearing review is limited to branches in the same repository. Fork pull requests skip it. The workflow uses ordinary `pull_request` events and does not use `pull_request_target`. Daytona credentials are injected into the trusted control-runner step, not the sandbox; SurrealDB credentials and meeting-provider keys are not needed by repository code.
 
-The broken cache is expected to leave ordinary tests green and the Canonical review red. The corrected cache should make both green. The `always()` summary/artifact steps retain available evidence after a failed review. Download `canonical-review` from the Actions run, then import its `report.json` locally. CI artifacts are the current handoff; automatic hosted dashboard delivery remains a later slice.
+The broken cache is expected to leave ordinary tests green and the Canonical review red. The corrected cache should make both green. The `always()` summary/artifact steps retain available evidence after a failed review. Download `canonical-review` from the Actions run, then import its `report.json` locally. The live review workflow also publishes directly to SurrealDB; `/api/events` delivers those snapshots to the dashboard. Artifacts remain a downloadable record.
 
 ## What is trusted and what is supported
 

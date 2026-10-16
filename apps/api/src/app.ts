@@ -1,3 +1,4 @@
+import { registerLiveRoutes } from './live-routes.ts';
 import { loadContextWorkspace, registerContextRoutes } from './context-routes.ts';
 import { randomUUID } from 'node:crypto';
 import Fastify from 'fastify';
@@ -24,6 +25,7 @@ export function buildApp({ store, daytona, evaluate }: AppOptions) {
   }));
 
   const drainContextJobs = registerContextRoutes(app, store);
+  registerLiveRoutes(app, store);
 
   app.get('/api/runs', async () => ({ runs: await store.list() }));
 

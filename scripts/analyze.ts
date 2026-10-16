@@ -5,7 +5,8 @@ import { parseArgs } from 'node:util';
 import { ExecutionModeSchema } from '@canonical/contracts';
 import { createRun } from '@canonical/demo';
 import { createEvaluator, createRepositoryRun, prepareRepositoryComparison, executeRun, exportContext } from '@canonical/runner';
-import { evaluateRepositoryWithDaytona } from '../integrations/daytona.ts';
+import { executeRepositoryReview } from '../packages/runner/src/review-pipeline.ts';
+import { extractObjects, extractLogic } from '../packages/runner/src/extraction.ts';
 import { readConfig } from '../apps/api/src/config.ts';
 import { createStore } from '../apps/api/src/store.ts';
 
@@ -25,13 +26,20 @@ const comparison = values.repo ? await prepareRepositoryComparison(values.repo, 
 let store: Awaited<ReturnType<typeof createStore>> | undefined;
 try {
   const run = comparison ? createRepositoryRun(randomUUID(), comparison) : createRun(randomUUID(), execution);
-  const evaluate = comparison
-    ? (variant: 'baseline' | 'candidate') => evaluateRepositoryWithDaytona(variant, {
-      bundlePath: comparison.bundlePath, sha: variant === 'baseline' ? comparison.baseSha : comparison.headSha,
-    }, config.daytona!)
-    : createEvaluator(run, config.daytona);
   store = await createStore(config);
-  await executeRun(run, store, evaluate);
+  if (comparison) {
+    await executeRepositoryReview(run, store, comparison, {
+      daytona: config.daytona,
+      extractors: { method: 'static-analysis', objects: extractObjects, logic: extractLogic },
+      trigger: process.env.GITHUB_ACTIONS === 'true' ? {
+        kind: 'github',
+        url: `https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,
+        attempt: process.env.GITHUB_RUN_ATTEMPT,
+      } : { kind: 'cli' },
+    });
+  } else {
+    await executeRun(run, store, createEvaluator(run, config.daytona));
+  }
   const output = resolve(values.output);
   await mkdir(output, { recursive: true });
   const report = JSON.stringify(run, null, 2);
