@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import type { AnalysisRun, Health, ReviewAgent } from '@canonical/contracts';
+import type { AnalysisRun, Health } from '@canonical/contracts';
 import { api, isFixture } from './lib/api';
 import { mergeRunSnapshots } from './lib/run-state';
-import { ObjectsSection } from './components/ObjectsSection';
-import { LogicSection } from './components/LogicSection';
+import { AnalysisWorkspace } from './components/AnalysisWorkspace';
 import { StatusPill, type Tone } from './components/ui';
 
 const message = (error: unknown) => error instanceof Error ? error.message : String(error);
@@ -12,7 +11,6 @@ const routeId = () => {
   try { return match ? decodeURIComponent(match[1]) : ''; } catch { return ''; }
 };
 const tone = (status: string): Tone => status === 'failed' || status === 'error' ? 'failed' : status === 'passed' || status === 'completed' ? 'added' : 'neutral';
-const symbol = (status: string) => status === 'passed' ? '✓' : status === 'failed' ? '✕' : status === 'error' ? '?' : '◷';
 function entries(run: AnalysisRun) {
   return run.review?.billOfBusiness ?? run.requirements.map(rule => {
     const check = run.results.find(result => result.variant === 'candidate')?.checks.find(check => check.requirementId === rule.id);
@@ -27,9 +25,6 @@ function verdict(run: AnalysisRun) {
   if (failed) return { label: `${failed} ${failed === 1 ? 'check' : 'checks'} failed`, tone: 'failed' as const };
   const passed = checks.filter(check => check.status === 'passed').length;
   return { label: passed === checks.length && passed ? `${passed} checks passed` : 'Review ready', tone: passed === checks.length && passed ? 'added' as const : 'neutral' as const };
-}
-function Pending({ agent, what }: { agent?: ReviewAgent; what: string }) {
-  return <div className="panel empty-state compact" role="status"><p>{agent?.status === 'error' ? agent.message : agent?.status === 'running' || agent?.status === 'queued' ? `Analyzing ${what}…` : `No ${what} available for this review.`}</p></div>;
 }
 
 export function App() {
@@ -80,7 +75,6 @@ export function App() {
     const key = (item: AnalysisRun) => item.source.kind === 'git' ? `${item.source.name}:${item.source.headSha}` : item.id;
     return list.findIndex(item => key(item) === key(run)) === index;
   });
-  const agent = (id: ReviewAgent['id']) => selected?.review?.agents.find(item => item.id === id);
   const outcome = selected && verdict(selected);
   return <div className="app-shell"><main className="main product-main">
     <header className="page-head analysis-header">
@@ -105,9 +99,7 @@ export function App() {
     </section> : selected ? <>
       {!!selected.review?.agents.length && <ul className="agent-strip" aria-label="Analysis progress">{selected.review.agents.map(item => <li key={item.id}><i className={`dot dot-${item.status === 'running' ? 'canonical pulse' : tone(item.status)}`} aria-hidden="true" /><span>{item.id === 'objects' ? 'Objects' : item.id === 'logic' ? 'Logic' : 'Business checks'}</span><small>{item.status}</small></li>)}</ul>}
       {selected.error && <p className="banner banner-failed" role="alert">{selected.error}</p>}
-      <section className="panel section" aria-label="Bill of business"><div className="panel-head"><h2>Bill of business</h2></div><ul className="business-list">{entries(selected).map(entry => <li key={entry.id}><span className={`text-${tone(entry.status)}`} aria-label={entry.status}>{symbol(entry.status)}</span><span>{entry.text}</span></li>)}</ul></section>
-      <section id="objects" className="section"><div className="section-head"><h2>Objects</h2></div>{selected.review?.objects ? <ObjectsSection key={selected.id} run={selected} layer={selected.review.objects} /> : <Pending agent={agent('objects')} what="object layer" />}</section>
-      <section id="logic" className="section"><div className="section-head"><h2>Logic flow</h2></div>{selected.review?.logic ? <LogicSection key={selected.id} run={selected} layer={selected.review.logic} /> : <Pending agent={agent('logic')} what="logic flow" />}</section>
+      <AnalysisWorkspace key={selected.id} run={selected} />
     </> : <div className="panel empty-state" role="status">{error ? 'This review is unavailable.' : 'Loading review…'}</div>}
   </main></div>;
 }

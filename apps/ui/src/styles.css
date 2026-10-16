@@ -297,7 +297,7 @@ h3 { font-size: 13px; font-weight: 600; }
   .page-actions { width: 100%; justify-content: flex-start; }
   .page-actions .button-primary { flex: 1; }
   .panel { padding: 16px; border-radius: var(--r-lg); }
-  .flow-canvas { min-width: 760px; }
+  .flow-canvas { min-width: 0; }
   .object-canvas { height: 420px; }
   .logic-canvas { height: 520px; }
   .panel-head { flex-direction: column; }
@@ -314,3 +314,86 @@ h3 { font-size: 13px; font-weight: 600; }
 .react-flow__node .flow-node,
 .react-flow__node .step-card,
 .react-flow__node .object-chip { pointer-events: auto; }
+
+/* Review workspace: a quiet business checklist beside either diagram. */
+.analysis-workspace { display: grid; grid-template-columns: 228px minmax(0, 1fr); gap: 24px; align-items: start; }
+.analysis-content { min-width: 0; }
+.analysis-workspace.has-change-drawer { padding-bottom: 48vh; }
+.analysis-tabs { display: flex; gap: 24px; border-bottom: 1px solid rgba(58,54,50,.16); margin-bottom: 20px; }
+.analysis-tabs button { padding: 12px 2px; border: 0; border-bottom: 3px solid transparent; background: transparent; color: var(--text-muted); font-size: 14px; font-weight: 500; }
+.analysis-tabs button[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
+.bob-panel { position: sticky; top: 24px; padding: 18px 14px; border: 1px solid rgba(58,54,50,.12); border-radius: 14px; background: var(--surface-inset); }
+.bob-heading { display: grid; gap: 3px; }
+.bob-heading h2 { font-size: 15px; }
+.bob-context { color: var(--text-muted); font-size: 11px; margin: 10px 0 18px; overflow-wrap: anywhere; }
+.bob-list { display: grid; gap: 18px; }
+.bob-item { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 8px; font-size: 12px; transition: opacity .15s; }
+.bob-symbol { font-size: 17px; font-weight: 600; line-height: 1.2; }
+.bob-passed .bob-symbol { color: var(--added-text); }
+.bob-failed .bob-symbol { color: var(--failed-text); }
+.bob-pending .bob-symbol, .bob-error .bob-symbol { color: var(--text-muted); }
+.bob-status { display: block; font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+.bob-evidence { display: block; color: var(--failed-text); font-size: 10px; margin-top: 5px; }
+.bob-item.is-irrelevant { opacity: .4; }
+.bob-item.is-irrelevant .bob-symbol { color: var(--text-muted); }
+.bob-footnote { margin-top: 22px; font-size: 10px; color: var(--text-muted); }
+.analysis-content .logic-panel { grid-template-columns: 170px minmax(0, 1fr); gap: 14px; }
+.analysis-content .flow-panel { padding: 18px; }
+.analysis-content .logic-canvas { max-height: 750px; }
+
+/* UML object notation: named rectangle and a distinct property compartment. */
+.uml-object { display: flex; flex-direction: column; padding: 0; border: 1px solid #aaa5a0; border-radius: 4px; background: #f7f5f2; color: var(--text); text-align: left; box-shadow: 2px 2px 5px rgba(58,54,50,.1); cursor: pointer; pointer-events: auto; }
+.uml-object-header { display: grid; justify-items: center; gap: 3px; padding: 12px 10px; border-bottom: 1px solid #bcb7b1; background: rgba(255,255,255,.35); width: 100%; overflow-wrap: anywhere; }
+.uml-object-header strong { font-size: 13px; text-underline-offset: 3px; }
+.uml-kind { font-size: 10px; color: var(--text-muted); }
+.uml-properties { display: grid; width: 100%; padding: 8px 12px; gap: 8px; }
+.uml-property { display: block; line-height: 22px; font-size: 12px; overflow-wrap: anywhere; }
+.uml-property-key { font-weight: 500; }
+.uml-property-value { font-size: 11px; }
+.uml-object > .pill { align-self: flex-start; margin: auto 10px 10px; }
+.uml-object.is-proposed { border-color: #a49adf; background: #f0edf9; }
+.uml-object.is-modified { border-left: 3px solid var(--modified); }
+.uml-object.is-added { border-left: 3px solid var(--added); }
+.uml-object.is-removed { border-left: 3px solid var(--failed); opacity: .65; }
+.uml-object.is-selected { outline: 2px solid var(--accent); outline-offset: 2px; }
+.react-flow__node .uml-object { pointer-events: auto; }
+
+/* A GitHub-style source review drawer; the graph above remains interactive. */
+.change-drawer { position: fixed; z-index: 1000; left: 16px; right: 16px; bottom: 0; height: 50dvh; min-height: 240px; display: flex; flex-direction: column; border: 1px solid #d0d7de; border-radius: 12px 12px 0 0; background: #fff; color: #1f2328; box-shadow: 0 -8px 28px rgba(31,35,40,.16); }
+.drawer-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 20px; border-bottom: 1px solid #d0d7de; background: #f6f8fa; border-radius: 12px 12px 0 0; flex-shrink: 0; }
+.drawer-title { min-width: 0; }
+.drawer-title h2 { font-size: 14px; }
+.drawer-meta { color: #656d76; font-size: 11px; margin-top: 3px; overflow-wrap: anywhere; }
+.drawer-close { border: 1px solid #d0d7de; border-radius: 6px; background: #fff; padding: 6px 12px; min-height: 34px; font-weight: 500; }
+.drawer-body { overflow: auto; padding: 16px 20px 24px; min-height: 0; }
+.diff-note { font-size: 11px; color: #656d76; margin: 0 0 12px; }
+.source-file { border: 1px solid #d0d7de; border-radius: 6px; overflow: auto; margin: 12px 0; }
+.source-file > header, .source-file > h3 { padding: 10px 12px; background: #f6f8fa; border-bottom: 1px solid #d0d7de; font: 12px var(--mono); overflow-wrap: anywhere; }
+.diff-table { border-collapse: collapse; width: 100%; font: 11px/1.6 var(--mono); table-layout: auto; }
+.diff-table td { padding: 0 8px; vertical-align: top; }
+.diff-line-number { width: 42px; min-width: 32px; color: #6e7781; text-align: right; user-select: none; border-right: 1px solid rgba(208,215,222,.35); }
+.diff-sign { width: 20px; user-select: none; }
+.diff-code { white-space: pre-wrap; overflow-wrap: anywhere; min-width: 180px; }
+.diff-row-add { background: #e6ffec; }
+.diff-row-add .diff-line-number { background: #ccffd8; color: #116329; }
+.diff-row-remove { background: #ffebe9; }
+.diff-row-remove .diff-line-number { background: #ffd7d5; color: #82071e; }
+.diff-row-context { background: #fff; }
+.diff-hunk { background: #ddf4ff; color: #0969da; font: 11px/1.7 var(--mono); }
+.property-diff { border-collapse: collapse; width: 100%; font-size: 12px; margin: 12px 0; }
+.property-diff th, .property-diff td { padding: 8px; border: 1px solid #d0d7de; text-align: left; overflow-wrap: anywhere; }
+.property-diff th { background: #f6f8fa; }
+@media(max-width: 1000px) { .analysis-workspace { grid-template-columns: 200px minmax(0, 1fr); gap: 16px; } .analysis-content .logic-panel { grid-template-columns: 1fr; } }
+@media(max-width: 650px) {
+  .analysis-workspace { grid-template-columns: 1fr; gap: 16px; }
+  .bob-panel { position: static; }
+  .bob-list { gap: 10px; }
+  .bob-context { margin: 5px 0 12px; }
+  .bob-footnote { margin-top: 12px; }
+  .analysis-tabs { margin-bottom: 14px; }
+  .change-drawer { left: 0; right: 0; }
+  .drawer-header, .drawer-body { padding: 12px; }
+}
+.analysis-content .logic-panel.single-flow { grid-template-columns: minmax(0, 1fr); }
+.flow-canvas .react-flow__controls { box-shadow: 0 1px 5px rgba(58,54,50,.12); border-radius: 6px; overflow: hidden; }
+.flow-canvas .react-flow__controls-button { background: #f7f5f2; border-bottom-color: #ddd8d1; }

@@ -1,38 +1,52 @@
-import { useMemo, useState } from 'react';
-import { Handle, Position, ReactFlow, type Edge, type Node, type NodeProps } from '@xyflow/react';
+import { useEffect, useMemo, useRef } from 'react';
+import { Controls, Handle, Position, ReactFlow, type Edge, type Node, type NodeProps } from '@xyflow/react';
 import type { AnalysisRun, LayerDiff } from '@canonical/contracts';
-import { ConceptObject } from './ConceptObject';
-import { ChangeRow, StatusPill, changeLabel, changeTone, edgeTypes } from './ui';
+import { StatusPill, changeLabel, changeTone, edgeTypes } from './ui';
 import { layoutObjects, mergeLayer, type MergedNode } from '../lib/review';
 
-type ObjectData = { item: MergedNode; selected: boolean; onSelect: (id: string) => void };
-const small = (item: MergedNode) => item.node.kind === 'parameter' || item.node.kind === 'field';
-const size = (item: MergedNode) => small(item) ? { w: 150, h: 40 } : { w: 150, h: 138 };
+type ObjectData = { item: MergedNode; selected: boolean; onSelect?: (item: MergedNode) => void };
+const properties = (item: MergedNode) => Object.entries(item.node.properties).filter(([, value]) => value.trim());
+const size = (item: MergedNode) => ({
+  w: 260,
+  h: 84 + (properties(item).length ? properties(item).reduce((height, [key, value]) => height + 8 + 22 * Math.max(1, Math.ceil((key.length + value.length + 2) / 34)), 0) : 30),
+});
 
 function ObjectNode({ data }: NodeProps<Node<ObjectData>>) {
   const { item, selected, onSelect } = data;
-  const proposed = item.change !== 'unchanged';
+  const changed = item.change !== 'unchanged';
+  const fields = properties(item);
   return <>
-    <Handle type="target" position={Position.Left} className="step-handle" isConnectable={false} />
-    {small(item)
-      ? <button className={`object-chip ${proposed ? `is-proposed is-${item.change}` : ''} ${selected ? 'is-selected' : ''}`} aria-pressed={selected} onClick={() => onSelect(item.id)}>{proposed && <i className={`dot dot-${changeTone(item.change)}`} aria-hidden="true" />}{item.node.label}</button>
-      : <button className={`step-card object-card ${proposed ? `is-proposed is-${item.change}` : ''} ${selected ? 'is-selected' : ''}`} aria-pressed={selected} onClick={() => onSelect(item.id)}>
-        <ConceptObject concept={{ id: item.node.kind, label: item.node.label }} size={72} decorative />
-        <span className="step-name mono">{item.node.label}</span>
-        {proposed ? <StatusPill tone={changeTone(item.change)}>{changeLabel(item.change)}</StatusPill> : <span className="step-note">{item.node.kind}</span>}
-      </button>}
-    <Handle type="source" position={Position.Right} className="step-handle" isConnectable={false} />
+    <Handle type="target" position={Position.Left} className="step-handle" isConnectable={false} style={{ pointerEvents: 'none' }} />
+    <button className={`uml-object ${changed ? `is-proposed is-${item.change}` : ''} ${selected ? 'is-selected' : ''}`} style={{ width: size(item).w, minHeight: size(item).h }} aria-pressed={selected} onClick={() => onSelect?.(item)}>
+      <span className="uml-object-header"><strong className="mono"><u>{item.node.label}</u></strong><span className="uml-kind">{item.node.kind}</span></span>
+      <span className="uml-properties">{fields.length ? fields.map(([key, value]) => <span className="uml-property" key={key}>
+        <span className="uml-property-key">{key}: </span><span className="uml-property-value mono">{value}</span>
+      </span>) : <span className="uml-property muted">No recorded properties</span>}</span>
+      {changed && <StatusPill tone={changeTone(item.change)}>{changeLabel(item.change)}</StatusPill>}
+    </button>
+    <Handle type="source" position={Position.Right} className="step-handle" isConnectable={false} style={{ pointerEvents: 'none' }} />
   </>;
 }
 const nodeTypes = { object: ObjectNode };
 
-export function ObjectsSection({ layer }: { run: AnalysisRun; layer: LayerDiff }) {
+interface ObjectsSectionProps {
+  run: AnalysisRun;
+  layer: LayerDiff;
+  selectedId?: string;
+  onSelectChange?: (item: MergedNode) => void;
+  onContextChange?: (nodes: MergedNode[], label: string) => void;
+  onClearSelection?: () => void;
+}
+
+export function ObjectsSection({ layer, selectedId = '', onSelectChange, onContextChange }: ObjectsSectionProps) {
   const merged = useMemo(() => mergeLayer(layer), [layer]);
   const changed = merged.nodes.filter(item => item.change !== 'unchanged');
-  const [selectedId, setSelectedId] = useState(changed[0]?.id ?? '');
+  const contextCallback = useRef(onContextChange);
+  useEffect(() => { contextCallback.current = onContextChange; }, [onContextChange]);
+  useEffect(() => { contextCallback.current?.(merged.nodes, 'Objects'); }, [merged]);
   const positions = useMemo(() => layoutObjects(merged.nodes, merged.edges, size), [merged]);
 
-  const nodes: Node<ObjectData>[] = merged.nodes.map(item => ({ id: item.id, type: 'object', position: positions.get(item.id)!, data: { item, selected: item.id === selectedId, onSelect: setSelectedId }, draggable: false, selectable: false, focusable: false }));
+  const nodes: Node<ObjectData>[] = merged.nodes.map(item => ({ id: item.id, type: 'object', position: positions.get(item.id)!, style: { width: size(item).w }, data: { item, selected: item.id === selectedId, onSelect: onSelectChange }, draggable: false, selectable: false, focusable: false }));
   const edges: Edge[] = merged.edges.map(edge => ({ id: edge.id, source: edge.source, target: edge.target, type: 'groove', focusable: false, data: { label: edge.change === 'unchanged' ? undefined : edge.label, change: edge.change } }));
 
   return <div className="section-body">
@@ -42,20 +56,19 @@ export function ObjectsSection({ layer }: { run: AnalysisRun; layer: LayerDiff }
         <ul className="legend" aria-label="Key"><li><i className="legend-swatch" />Changed</li><li><i className="dot dot-failed" />Removed</li><li><i className="legend-line" />New relationship</li></ul>
       </div>
       <div className="flow-scroll"><div className="flow-canvas object-canvas fading-grid">
-        <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes} edgeTypes={edgeTypes} fitView fitViewOptions={{ padding: 0.1 }} nodesDraggable={false} nodesConnectable={false} elementsSelectable={false} zoomOnScroll={false} preventScrolling={false} minZoom={0.25} maxZoom={1.2} proOptions={{ hideAttribution: true }} />
+        <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes} edgeTypes={edgeTypes} fitView fitViewOptions={{ padding: 0.1 }} nodesDraggable={false} nodesConnectable={false} elementsSelectable={false} zoomOnScroll={false} preventScrolling={false} minZoom={0.1} maxZoom={1.2} proOptions={{ hideAttribution: true }}><Controls showInteractive={false} /></ReactFlow>
       </div></div>
       <span className="provenance">{layer.provenance === 'static-analysis' ? 'Static analysis' : `Model inference${layer.model ? ` · ${layer.model.name}` : ''}`}</span>
     </div>
 
     <div className="panel">
       <div className="panel-head"><div><h2>Changes</h2></div><span className="count">{changed.length} {changed.length === 1 ? 'change' : 'changes'}</span></div>
-      {changed.length ? <ul className="stack">{changed.map(item => <ChangeRow key={item.id} title={item.node.label} kind={item.node.kind} change={item.change} selected={item.id === selectedId} onSelect={() => setSelectedId(item.id === selectedId ? '' : item.id)}>
-        <div className="change-detail">
-          <p>{item.node.description}</p>
-          {!!Object.keys(item.node.properties).length && <dl className="facts">{Object.entries(item.node.properties).filter(([, value]) => value).map(([key, value]) => <div key={key}><dt>{key}</dt><dd className="mono">{value}</dd></div>)}</dl>}
-          {item.node.citations[0] && <pre className="code-well"><span>{item.node.citations[0].path}:{item.node.citations[0].startLine}</span><code>{item.node.citations[0].excerpt}</code></pre>}
-        </div>
-      </ChangeRow>)}</ul> : <p className="muted">No object changes.</p>}
+      {changed.length ? <ul className="stack">{changed.map(item => <li className={`change-row ${item.id === selectedId ? 'is-selected' : ''}`} key={item.id}>
+        <button className="change-head" aria-pressed={item.id === selectedId} onClick={() => onSelectChange?.(item)}>
+          <span className="change-title"><strong className="mono">{item.node.label}</strong><span>{item.node.kind}</span></span>
+          <StatusPill tone={changeTone(item.change)}>{changeLabel(item.change)}</StatusPill>
+        </button>
+      </li>)}</ul> : <p className="muted">No object changes.</p>}
     </div>
 
   </div>;
