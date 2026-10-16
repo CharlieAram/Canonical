@@ -5,17 +5,26 @@ Actions compare it with the approved baseline, execute checks in Daytona, persis
 progress to SurrealDB Cloud, and watch the existing dashboard update. Artifact
 downloads remain useful evidence, but are not the transport for this live path.
 
-This guide describes the live-review setup and expected results. A workflow file,
-queued job, or animated progress indicator alone does not establish that a hosted
-run succeeded. Confirm the completed job, exact Git revisions, database record,
-and visible dashboard evidence before presenting the integration as verified.
+The hosted path is verified:
+
+- [Regression push b4f754f](https://github.com/CharlieAram/CanonicalTestbed/actions/runs/38946185169): unit tests pass; bill of business fails account pricing and passes its other two entries. Report `b85c07c4-5223-453e-968a-5c8872145ca8`.
+- [Repair push 9331517](https://github.com/CharlieAram/CanonicalTestbed/actions/runs/38946314398): unit tests and all three business entries pass. Report `6e200269-dd02-41e2-a619-33585316e314`.
+
+Live SSE observation recorded queued/running/completed extraction and check tasks.
+A browser left open before the repair push discovered the new review and displayed
+its progress without a refresh or import. Object extraction resolves the cache key
+as `sku` for the regression and `JSON.stringify([account, sku])` for the repair.
+Both layers retain source citations with exact commit SHAs. The normal test/build
+check passes 64 tests. These are static-analysis workers, not model-backed agents.
 
 ## Wire the shared database
 
 Use one namespace and database for both the API and the CI runner. Configure the
 API's ignored `.env` with `CANONICAL_STORE=surreal` and the six `SURREAL_*` variables
-listed below. Initialize the schema with `npm run db:init`, verify connectivity
-with `npm run db:smoke`, and start the API/UI with `npm run dev`.
+listed below. For an existing Cloud namespace/database, `npm run db:smoke`
+applies the application schema and verifies connectivity; start the API/UI with
+`npm run dev`. `npm run db:init` is only for bootstrapping a fresh local server
+with credentials authorized to create namespaces/databases.
 
 On `CharlieAram/CanonicalTestbed`, configure these encrypted Actions secrets:
 
@@ -35,10 +44,10 @@ or paste them into a workflow. The workflow supplies credentials only to the
 trusted runner's analysis step. Repository code runs in Daytona without inheriting
 the runner's environment.
 
-Pin `.github/workflows/canonical.yml` to the published Canonical commit containing
-the live-review implementation. Replace `__CANONICAL_LIVE_REVIEW_SHA__` before
-pushing. Install the updated workflow on Testbed `main` before preparing the demo
-branch. `CANONICAL_STORE` is explicitly `surreal`; missing database configuration
+Testbed `main` and `demo/live-review` pin the published Canonical runner at
+`a65548733c9a67cfbc8df706ceba472c3d2a3baa`. The shared database secrets are configured.
+When adopting a newer runner, update this fixed SHA explicitly before preparing
+the demo branch. `CANONICAL_STORE` is explicitly `surreal`; missing database configuration
 is an error, never a silent memory fallback.
 
 Keep fork PR filtering and read-only repository permissions. This path does not
@@ -56,13 +65,13 @@ policy. The commands below create new commits by cherry-picking their patches.
 cd ../CanonicalTestbed
 git switch main
 git pull --ff-only
-git switch -c demo/live-review
+git switch -c demo/rehearsal-1
 git cherry-pick 2dfe37d
 npm test
-git push -u origin demo/live-review
+git push -u origin demo/rehearsal-1
 ```
 
-If `demo/live-review` already exists, inspect it and resume it, or use a fresh
+The verified `demo/live-review` branch already contains the repair. If `demo/rehearsal-1` already exists, inspect it and resume it, or use a fresh
 `demo/` branch name. Do not reset or force-push existing work. Every push under
 `demo/**` triggers a real hosted review. Keep the dashboard open before pushing
 to see actual progress arrive from the shared database.
@@ -84,7 +93,7 @@ The review has three independently reported tasks:
 
 Each task reports `queued`, `running`, `completed`, or `error`. These are execution
 states, not evidence of separate autonomous model agents. Read the task's method:
-`static-analysis` is deterministic source processing, `model` means an actual
+`static-analysis` is deterministic source processing in the CI control runner, `model` means an actual
 configured model call, and `daytona` is sandbox execution. A model-derived claim
 must be labeled as inference. Static extraction must not be presented as AI
 reasoning, and source citations do not prove a business requirement passed.

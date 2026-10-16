@@ -110,3 +110,8 @@ Extraction currently uses the TypeScript compiler's AST parser and is labeled
 not claim general repository understanding or LLM inference. The bill's checkmarks
 and crosses come exclusively from executed baseline/candidate checks; pending
 and execution errors stay distinct. See [the push demo guide](docs/PUSH_DEMO.md).
+
+Live push verification: [prepared regression](https://github.com/CharlieAram/CanonicalTestbed/actions/runs/38946185169)
+produces the pricing cross; [prepared repair](https://github.com/CharlieAram/CanonicalTestbed/actions/runs/38946314398)
+produces three checks. Both appear through shared storage/live events without
+manual report imports. Use a fresh `demo/` branch from Testbed `main` to rehearse.

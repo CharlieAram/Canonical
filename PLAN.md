@@ -2,7 +2,7 @@
 
 Based on [README.md](README.md), with platform and library research checked on October 16, 2026. Detailed sources and alternatives are in [RESEARCH.md](RESEARCH.md).
 
-This is the product roadmap. The runnable app includes the declared-fixture v0 and exact Git comparison through Daytona, with CI artifact export and dashboard report import. The next functional slice adds static object/logic extraction and live browser delivery; model-based business inference remains a later slice. See [the real CI guide](docs/REAL_CI.md) for the implemented path.
+This is the product roadmap. The runnable app includes the declared-fixture v0 and exact Git comparison through Daytona, with CI artifact export and dashboard report import. The runnable app also extracts static object/logic diffs and delivers CI task progress and business verdicts live; model-based business inference remains a later slice. See [the real CI guide](docs/REAL_CI.md) for the implemented path.
 
 **Build a business-level commit review with executable evidence.** The demo should show an optimization that makes price quotes faster while accidentally giving one customer another customer's price. Canonical makes that tradeoff visible, reproduces the failure in Daytona, and exports the business context for the next coding agent.
 
