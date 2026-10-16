@@ -66,7 +66,9 @@ Official references: [JavaScript SDK](https://surrealdb.com/docs/reference/javas
 
 ## Verification and dependency notes
 
-The initial verification passed all 14 tests. A real Daytona smoke run passed all three baseline checks and requested sandbox cleanup without warnings. Integration checks against an actual SurrealDB `3.3.0` server passed graph persistence and live notifications. Run the smoke commands with your own configuration to verify your environment.
+Current validation passes 43 tests and the production build. Real hosted Daytona comparisons reproduce the broken cache failure and pass the corrected cache. Local SurrealDB `3.3.0` tests verify graph persistence, live notifications, concurrent updates, transaction rollback, and API access with a database-level EDITOR account.
+
+Surreal Cloud `3.3.2` was also verified with a database-level EDITOR user: report persistence, native citation traversal, live notifications, and restoration after restarting the API all pass. Three real comparison reports and an explicitly synthetic reviewed quote were migrated to the configured instance. Browser verification confirms the SurrealDB storage label, failed pricing evidence, and cited context download. Connection credentials remain exclusively in ignored `.env`; each teammate must configure their own environment. Run the smoke commands to verify another environment.
 
 The initial dependency audit reports four high-severity entries from one transitive `braces` advisory through Daytona's `fast-glob` dependency. There is no fixed release available in the installed dependency path. This adapter does not accept user-provided glob patterns; reassess the dependency when upgrading or adding file-selection features.
 
