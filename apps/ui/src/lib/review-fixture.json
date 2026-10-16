@@ -1,0 +1,1935 @@
+{
+ "version": 1,
+ "sequence": 1,
+ "agents": [
+  {
+   "id": "objects",
+   "label": "Object layer",
+   "method": "static-analysis",
+   "status": "completed",
+   "message": "Synthetic UI fixture"
+  },
+  {
+   "id": "logic",
+   "label": "Logic layer",
+   "method": "static-analysis",
+   "status": "completed",
+   "message": "Synthetic UI fixture"
+  },
+  {
+   "id": "business-checks",
+   "label": "Business checks",
+   "method": "daytona",
+   "status": "completed",
+   "message": "Synthetic UI fixture"
+  }
+ ],
+ "objects": {
+  "provenance": "static-analysis",
+  "before": {
+   "nodes": [
+    {
+     "id": "object:createQuoteService",
+     "label": "createQuoteService",
+     "kind": "function",
+     "description": "Callable declared in src/pricing.mjs.",
+     "properties": {
+      "parameters": "upstreamMs = 15",
+      "async": "false"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "startLine": 1,
+       "endLine": 14,
+       "excerpt": "export function createQuoteService(upstreamMs = 15) {\n  let upstreamCalls = 0;\n  return {\n    get upstreamCalls() { return upstreamCalls; },\n    async quote(account, sku, quantity = 1) {\n      if (!Number.isInteger(quantity) || quantity <= 0) throw new Error('Invalid quantity');\n      if (!['alpha', 'beta'].includes(account) || sku !== 'demo-product') throw new Error('Unknown pricing input');\n      upstreamCalls++;\n      await new Promise(resolve => setTimeout(resolve, upstreamMs));\n      const price = account === 'alpha' ? 80 : 100;\n      return price * quantity;\n    },\n  };\n}"
+      }
+     ]
+    },
+    {
+     "id": "object:createQuoteService:parameter:upstreamMs",
+     "label": "upstreamMs",
+     "kind": "parameter",
+     "description": "Input to createQuoteService.",
+     "properties": {
+      "default": "15"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "startLine": 1,
+       "endLine": 1,
+       "excerpt": "upstreamMs = 15"
+      }
+     ]
+    },
+    {
+     "id": "object:createQuoteService.upstreamCalls",
+     "label": "upstreamCalls",
+     "kind": "getter",
+     "description": "Getter declared in src/pricing.mjs.",
+     "properties": {
+      "parameters": "",
+      "async": "false"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "startLine": 4,
+       "endLine": 4,
+       "excerpt": "get upstreamCalls() { return upstreamCalls; }"
+      }
+     ]
+    },
+    {
+     "id": "object:createQuoteService.quote",
+     "label": "quote",
+     "kind": "method",
+     "description": "Callable declared in src/pricing.mjs.",
+     "properties": {
+      "parameters": "account, sku, quantity = 1",
+      "async": "true"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "startLine": 5,
+       "endLine": 12,
+       "excerpt": "async quote(account, sku, quantity = 1) {\n      if (!Number.isInteger(quantity) || quantity <= 0) throw new Error('Invalid quantity');\n      if (!['alpha', 'beta'].includes(account) || sku !== 'demo-product') throw new Error('Unknown pricing input');\n      upstreamCalls++;\n      await new Promise(resolve => setTimeout(resolve, upstreamMs));\n      const price = account === 'alpha' ? 80 : 100;\n      return price * quantity;\n    }"
+      }
+     ]
+    },
+    {
+     "id": "object:createQuoteService.quote:parameter:account",
+     "label": "account",
+     "kind": "parameter",
+     "description": "Input to createQuoteService.quote.",
+     "properties": {},
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "startLine": 5,
+       "endLine": 5,
+       "excerpt": "account"
+      }
+     ]
+    },
+    {
+     "id": "object:createQuoteService.quote:parameter:sku",
+     "label": "sku",
+     "kind": "parameter",
+     "description": "Input to createQuoteService.quote.",
+     "properties": {},
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "startLine": 5,
+       "endLine": 5,
+       "excerpt": "sku"
+      }
+     ]
+    },
+    {
+     "id": "object:createQuoteService.quote:parameter:quantity",
+     "label": "quantity",
+     "kind": "parameter",
+     "description": "Input to createQuoteService.quote.",
+     "properties": {
+      "default": "1"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "startLine": 5,
+       "endLine": 5,
+       "excerpt": "quantity = 1"
+      }
+     ]
+    },
+    {
+     "id": "object:createQuoteService:state:upstreamCalls",
+     "label": "upstreamCalls",
+     "kind": "state",
+     "description": "Declared let binding in createQuoteService.",
+     "properties": {
+      "declaration": "let",
+      "initializer": "0"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "startLine": 2,
+       "endLine": 2,
+       "excerpt": "upstreamCalls = 0"
+      }
+     ]
+    },
+    {
+     "id": "object:createQuoteService.quote:state:price",
+     "label": "price",
+     "kind": "state",
+     "description": "Declared const binding in createQuoteService.quote.",
+     "properties": {
+      "declaration": "const",
+      "initializer": "account === 'alpha' ? 80 : 100"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "startLine": 10,
+       "endLine": 10,
+       "excerpt": "price = account === 'alpha' ? 80 : 100"
+      }
+     ]
+    },
+    {
+     "id": "object:createQuoteService:result",
+     "label": "createQuoteService result",
+     "kind": "object",
+     "description": "Object literal returned by this function.",
+     "properties": {
+      "fields": "upstreamCalls, quote"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "startLine": 3,
+       "endLine": 13,
+       "excerpt": "{\n    get upstreamCalls() { return upstreamCalls; },\n    async quote(account, sku, quantity = 1) {\n      if (!Number.isInteger(quantity) || quantity <= 0) throw new Error('Invalid quantity');\n      if (!['alpha', 'beta'].includes(account) || sku !== 'demo-product') throw new Error('Unknown pricing input');\n      upstreamCalls++;\n      await new Promise(resolve => setTimeout(resolve, upstreamMs));\n      const price = account === 'alpha' ? 80 : 100;\n      return price * quantity;\n    },\n  }"
+      }
+     ]
+    }
+   ],
+   "edges": [
+    {
+     "id": "object:createQuoteService->object:createQuoteService:parameter:upstreamMs:accepts",
+     "source": "object:createQuoteService",
+     "target": "object:createQuoteService:parameter:upstreamMs",
+     "label": "accepts"
+    },
+    {
+     "id": "object:createQuoteService.quote->object:createQuoteService.quote:parameter:account:accepts",
+     "source": "object:createQuoteService.quote",
+     "target": "object:createQuoteService.quote:parameter:account",
+     "label": "accepts"
+    },
+    {
+     "id": "object:createQuoteService.quote->object:createQuoteService.quote:parameter:sku:accepts",
+     "source": "object:createQuoteService.quote",
+     "target": "object:createQuoteService.quote:parameter:sku",
+     "label": "accepts"
+    },
+    {
+     "id": "object:createQuoteService.quote->object:createQuoteService.quote:parameter:quantity:accepts",
+     "source": "object:createQuoteService.quote",
+     "target": "object:createQuoteService.quote:parameter:quantity",
+     "label": "accepts"
+    },
+    {
+     "id": "object:createQuoteService->object:createQuoteService:state:upstreamCalls:declares",
+     "source": "object:createQuoteService",
+     "target": "object:createQuoteService:state:upstreamCalls",
+     "label": "declares"
+    },
+    {
+     "id": "object:createQuoteService.quote->object:createQuoteService.quote:state:price:declares",
+     "source": "object:createQuoteService.quote",
+     "target": "object:createQuoteService.quote:state:price",
+     "label": "declares"
+    },
+    {
+     "id": "object:createQuoteService->object:createQuoteService:result:returns",
+     "source": "object:createQuoteService",
+     "target": "object:createQuoteService:result",
+     "label": "returns"
+    },
+    {
+     "id": "object:createQuoteService:result->object:createQuoteService.upstreamCalls:exposes",
+     "source": "object:createQuoteService:result",
+     "target": "object:createQuoteService.upstreamCalls",
+     "label": "exposes"
+    },
+    {
+     "id": "object:createQuoteService:result->object:createQuoteService.quote:exposes",
+     "source": "object:createQuoteService:result",
+     "target": "object:createQuoteService.quote",
+     "label": "exposes"
+    },
+    {
+     "id": "object:createQuoteService.upstreamCalls->object:createQuoteService:state:upstreamCalls:uses",
+     "source": "object:createQuoteService.upstreamCalls",
+     "target": "object:createQuoteService:state:upstreamCalls",
+     "label": "uses"
+    },
+    {
+     "id": "object:createQuoteService.quote->object:createQuoteService.quote:parameter:quantity:uses",
+     "source": "object:createQuoteService.quote",
+     "target": "object:createQuoteService.quote:parameter:quantity",
+     "label": "uses"
+    },
+    {
+     "id": "object:createQuoteService.quote->object:createQuoteService.quote:parameter:account:uses",
+     "source": "object:createQuoteService.quote",
+     "target": "object:createQuoteService.quote:parameter:account",
+     "label": "uses"
+    },
+    {
+     "id": "object:createQuoteService.quote->object:createQuoteService.quote:parameter:sku:uses",
+     "source": "object:createQuoteService.quote",
+     "target": "object:createQuoteService.quote:parameter:sku",
+     "label": "uses"
+    },
+    {
+     "id": "object:createQuoteService.quote->object:createQuoteService:state:upstreamCalls:uses",
+     "source": "object:createQuoteService.quote",
+     "target": "object:createQuoteService:state:upstreamCalls",
+     "label": "uses"
+    },
+    {
+     "id": "object:createQuoteService.quote->object:createQuoteService.quote:state:price:uses",
+     "source": "object:createQuoteService.quote",
+     "target": "object:createQuoteService.quote:state:price",
+     "label": "uses"
+    }
+   ]
+  },
+  "after": {
+   "nodes": [
+    {
+     "id": "object:createQuoteService",
+     "label": "createQuoteService",
+     "kind": "function",
+     "description": "Callable declared in src/pricing.mjs.",
+     "properties": {
+      "parameters": "upstreamMs = 15",
+      "async": "false"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 1,
+       "endLine": 17,
+       "excerpt": "export function createQuoteService(upstreamMs = 15) {\n  const cache = new Map();\n  let upstreamCalls = 0;\n  return {\n    get upstreamCalls() { return upstreamCalls; },\n    async quote(account, sku, quantity = 1) {\n      if (!Number.isInteger(quantity) || quantity <= 0) throw new Error('Invalid quantity');\n      if (!['alpha', 'beta'].includes(account) || sku !== 'demo-product') throw new Error('Unknown pricing input');\n      if (cache.has(sku)) return cache.get(sku) * quantity;\n      upstreamCalls++;\n      await new Promise(resolve => setTimeout(resolve, upstreamMs));\n      const price = account === 'alpha' ? 80 : 100;\n      cache.set(sku, price);\n      return price * quantity;\n    },\n  };\n}"
+      }
+     ]
+    },
+    {
+     "id": "object:createQuoteService:parameter:upstreamMs",
+     "label": "upstreamMs",
+     "kind": "parameter",
+     "description": "Input to createQuoteService.",
+     "properties": {
+      "default": "15"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 1,
+       "endLine": 1,
+       "excerpt": "upstreamMs = 15"
+      }
+     ]
+    },
+    {
+     "id": "object:createQuoteService.upstreamCalls",
+     "label": "upstreamCalls",
+     "kind": "getter",
+     "description": "Getter declared in src/pricing.mjs.",
+     "properties": {
+      "parameters": "",
+      "async": "false"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 5,
+       "endLine": 5,
+       "excerpt": "get upstreamCalls() { return upstreamCalls; }"
+      }
+     ]
+    },
+    {
+     "id": "object:createQuoteService.quote",
+     "label": "quote",
+     "kind": "method",
+     "description": "Callable declared in src/pricing.mjs.",
+     "properties": {
+      "parameters": "account, sku, quantity = 1",
+      "async": "true"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 6,
+       "endLine": 15,
+       "excerpt": "async quote(account, sku, quantity = 1) {\n      if (!Number.isInteger(quantity) || quantity <= 0) throw new Error('Invalid quantity');\n      if (!['alpha', 'beta'].includes(account) || sku !== 'demo-product') throw new Error('Unknown pricing input');\n      if (cache.has(sku)) return cache.get(sku) * quantity;\n      upstreamCalls++;\n      await new Promise(resolve => setTimeout(resolve, upstreamMs));\n      const price = account === 'alpha' ? 80 : 100;\n      cache.set(sku, price);\n      return price * quantity;\n    }"
+      }
+     ]
+    },
+    {
+     "id": "object:createQuoteService.quote:parameter:account",
+     "label": "account",
+     "kind": "parameter",
+     "description": "Input to createQuoteService.quote.",
+     "properties": {},
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 6,
+       "endLine": 6,
+       "excerpt": "account"
+      }
+     ]
+    },
+    {
+     "id": "object:createQuoteService.quote:parameter:sku",
+     "label": "sku",
+     "kind": "parameter",
+     "description": "Input to createQuoteService.quote.",
+     "properties": {},
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 6,
+       "endLine": 6,
+       "excerpt": "sku"
+      }
+     ]
+    },
+    {
+     "id": "object:createQuoteService.quote:parameter:quantity",
+     "label": "quantity",
+     "kind": "parameter",
+     "description": "Input to createQuoteService.quote.",
+     "properties": {
+      "default": "1"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 6,
+       "endLine": 6,
+       "excerpt": "quantity = 1"
+      }
+     ]
+    },
+    {
+     "id": "object:createQuoteService:state:cache",
+     "label": "cache",
+     "kind": "collection",
+     "description": "Declared Map cache; observed key inputs: sku.",
+     "properties": {
+      "declaration": "const",
+      "initializer": "new Map()",
+      "collection": "Map",
+      "keyExpressions": "sku",
+      "keyInputs": "sku",
+      "operations": "get, has, set"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 2,
+       "endLine": 2,
+       "excerpt": "cache = new Map()"
+      },
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 9,
+       "endLine": 9,
+       "excerpt": "cache.has(sku)"
+      },
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 9,
+       "endLine": 9,
+       "excerpt": "cache.get(sku)"
+      },
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 13,
+       "endLine": 13,
+       "excerpt": "cache.set(sku, price)"
+      }
+     ]
+    },
+    {
+     "id": "object:createQuoteService:state:upstreamCalls",
+     "label": "upstreamCalls",
+     "kind": "state",
+     "description": "Declared let binding in createQuoteService.",
+     "properties": {
+      "declaration": "let",
+      "initializer": "0"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 3,
+       "endLine": 3,
+       "excerpt": "upstreamCalls = 0"
+      }
+     ]
+    },
+    {
+     "id": "object:createQuoteService.quote:state:price",
+     "label": "price",
+     "kind": "state",
+     "description": "Declared const binding in createQuoteService.quote.",
+     "properties": {
+      "declaration": "const",
+      "initializer": "account === 'alpha' ? 80 : 100"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 12,
+       "endLine": 12,
+       "excerpt": "price = account === 'alpha' ? 80 : 100"
+      }
+     ]
+    },
+    {
+     "id": "object:createQuoteService:result",
+     "label": "createQuoteService result",
+     "kind": "object",
+     "description": "Object literal returned by this function.",
+     "properties": {
+      "fields": "upstreamCalls, quote"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 4,
+       "endLine": 16,
+       "excerpt": "{\n    get upstreamCalls() { return upstreamCalls; },\n    async quote(account, sku, quantity = 1) {\n      if (!Number.isInteger(quantity) || quantity <= 0) throw new Error('Invalid quantity');\n      if (!['alpha', 'beta'].includes(account) || sku !== 'demo-product') throw new Error('Unknown pricing input');\n      if (cache.has(sku)) return cache.get(sku) * quantity;\n      upstreamCalls++;\n      await new Promise(resolve => setTimeout(resolve, upstreamMs));\n      const price = account === 'alpha' ? 80 : 100;\n      cache.set(sku, price);\n      return price * quantity;\n    },\n  }"
+      }
+     ]
+    }
+   ],
+   "edges": [
+    {
+     "id": "object:createQuoteService->object:createQuoteService:parameter:upstreamMs:accepts",
+     "source": "object:createQuoteService",
+     "target": "object:createQuoteService:parameter:upstreamMs",
+     "label": "accepts"
+    },
+    {
+     "id": "object:createQuoteService.quote->object:createQuoteService.quote:parameter:account:accepts",
+     "source": "object:createQuoteService.quote",
+     "target": "object:createQuoteService.quote:parameter:account",
+     "label": "accepts"
+    },
+    {
+     "id": "object:createQuoteService.quote->object:createQuoteService.quote:parameter:sku:accepts",
+     "source": "object:createQuoteService.quote",
+     "target": "object:createQuoteService.quote:parameter:sku",
+     "label": "accepts"
+    },
+    {
+     "id": "object:createQuoteService.quote->object:createQuoteService.quote:parameter:quantity:accepts",
+     "source": "object:createQuoteService.quote",
+     "target": "object:createQuoteService.quote:parameter:quantity",
+     "label": "accepts"
+    },
+    {
+     "id": "object:createQuoteService->object:createQuoteService:state:cache:declares",
+     "source": "object:createQuoteService",
+     "target": "object:createQuoteService:state:cache",
+     "label": "declares"
+    },
+    {
+     "id": "object:createQuoteService->object:createQuoteService:state:upstreamCalls:declares",
+     "source": "object:createQuoteService",
+     "target": "object:createQuoteService:state:upstreamCalls",
+     "label": "declares"
+    },
+    {
+     "id": "object:createQuoteService.quote->object:createQuoteService.quote:state:price:declares",
+     "source": "object:createQuoteService.quote",
+     "target": "object:createQuoteService.quote:state:price",
+     "label": "declares"
+    },
+    {
+     "id": "object:createQuoteService->object:createQuoteService:result:returns",
+     "source": "object:createQuoteService",
+     "target": "object:createQuoteService:result",
+     "label": "returns"
+    },
+    {
+     "id": "object:createQuoteService:result->object:createQuoteService.upstreamCalls:exposes",
+     "source": "object:createQuoteService:result",
+     "target": "object:createQuoteService.upstreamCalls",
+     "label": "exposes"
+    },
+    {
+     "id": "object:createQuoteService:result->object:createQuoteService.quote:exposes",
+     "source": "object:createQuoteService:result",
+     "target": "object:createQuoteService.quote",
+     "label": "exposes"
+    },
+    {
+     "id": "object:createQuoteService.upstreamCalls->object:createQuoteService:state:upstreamCalls:uses",
+     "source": "object:createQuoteService.upstreamCalls",
+     "target": "object:createQuoteService:state:upstreamCalls",
+     "label": "uses"
+    },
+    {
+     "id": "object:createQuoteService.quote->object:createQuoteService.quote:parameter:quantity:uses",
+     "source": "object:createQuoteService.quote",
+     "target": "object:createQuoteService.quote:parameter:quantity",
+     "label": "uses"
+    },
+    {
+     "id": "object:createQuoteService.quote->object:createQuoteService.quote:parameter:account:uses",
+     "source": "object:createQuoteService.quote",
+     "target": "object:createQuoteService.quote:parameter:account",
+     "label": "uses"
+    },
+    {
+     "id": "object:createQuoteService.quote->object:createQuoteService.quote:parameter:sku:uses",
+     "source": "object:createQuoteService.quote",
+     "target": "object:createQuoteService.quote:parameter:sku",
+     "label": "uses"
+    },
+    {
+     "id": "object:createQuoteService.quote->object:createQuoteService:state:cache:uses",
+     "source": "object:createQuoteService.quote",
+     "target": "object:createQuoteService:state:cache",
+     "label": "uses"
+    },
+    {
+     "id": "object:createQuoteService.quote->object:createQuoteService:state:upstreamCalls:uses",
+     "source": "object:createQuoteService.quote",
+     "target": "object:createQuoteService:state:upstreamCalls",
+     "label": "uses"
+    },
+    {
+     "id": "object:createQuoteService.quote->object:createQuoteService.quote:state:price:uses",
+     "source": "object:createQuoteService.quote",
+     "target": "object:createQuoteService.quote:state:price",
+     "label": "uses"
+    }
+   ]
+  },
+  "changes": [
+   {
+    "id": "object:createQuoteService",
+    "entity": "node",
+    "change": "unchanged"
+   },
+   {
+    "id": "object:createQuoteService:parameter:upstreamMs",
+    "entity": "node",
+    "change": "unchanged"
+   },
+   {
+    "id": "object:createQuoteService.upstreamCalls",
+    "entity": "node",
+    "change": "unchanged"
+   },
+   {
+    "id": "object:createQuoteService.quote",
+    "entity": "node",
+    "change": "unchanged"
+   },
+   {
+    "id": "object:createQuoteService.quote:parameter:account",
+    "entity": "node",
+    "change": "unchanged"
+   },
+   {
+    "id": "object:createQuoteService.quote:parameter:sku",
+    "entity": "node",
+    "change": "unchanged"
+   },
+   {
+    "id": "object:createQuoteService.quote:parameter:quantity",
+    "entity": "node",
+    "change": "unchanged"
+   },
+   {
+    "id": "object:createQuoteService:state:upstreamCalls",
+    "entity": "node",
+    "change": "unchanged"
+   },
+   {
+    "id": "object:createQuoteService.quote:state:price",
+    "entity": "node",
+    "change": "unchanged"
+   },
+   {
+    "id": "object:createQuoteService:result",
+    "entity": "node",
+    "change": "unchanged"
+   },
+   {
+    "id": "object:createQuoteService:state:cache",
+    "entity": "node",
+    "change": "added"
+   },
+   {
+    "id": "object:createQuoteService->object:createQuoteService:parameter:upstreamMs:accepts",
+    "entity": "edge",
+    "change": "unchanged"
+   },
+   {
+    "id": "object:createQuoteService.quote->object:createQuoteService.quote:parameter:account:accepts",
+    "entity": "edge",
+    "change": "unchanged"
+   },
+   {
+    "id": "object:createQuoteService.quote->object:createQuoteService.quote:parameter:sku:accepts",
+    "entity": "edge",
+    "change": "unchanged"
+   },
+   {
+    "id": "object:createQuoteService.quote->object:createQuoteService.quote:parameter:quantity:accepts",
+    "entity": "edge",
+    "change": "unchanged"
+   },
+   {
+    "id": "object:createQuoteService->object:createQuoteService:state:upstreamCalls:declares",
+    "entity": "edge",
+    "change": "unchanged"
+   },
+   {
+    "id": "object:createQuoteService.quote->object:createQuoteService.quote:state:price:declares",
+    "entity": "edge",
+    "change": "unchanged"
+   },
+   {
+    "id": "object:createQuoteService->object:createQuoteService:result:returns",
+    "entity": "edge",
+    "change": "unchanged"
+   },
+   {
+    "id": "object:createQuoteService:result->object:createQuoteService.upstreamCalls:exposes",
+    "entity": "edge",
+    "change": "unchanged"
+   },
+   {
+    "id": "object:createQuoteService:result->object:createQuoteService.quote:exposes",
+    "entity": "edge",
+    "change": "unchanged"
+   },
+   {
+    "id": "object:createQuoteService.upstreamCalls->object:createQuoteService:state:upstreamCalls:uses",
+    "entity": "edge",
+    "change": "unchanged"
+   },
+   {
+    "id": "object:createQuoteService.quote->object:createQuoteService.quote:parameter:quantity:uses",
+    "entity": "edge",
+    "change": "unchanged"
+   },
+   {
+    "id": "object:createQuoteService.quote->object:createQuoteService.quote:parameter:account:uses",
+    "entity": "edge",
+    "change": "unchanged"
+   },
+   {
+    "id": "object:createQuoteService.quote->object:createQuoteService.quote:parameter:sku:uses",
+    "entity": "edge",
+    "change": "unchanged"
+   },
+   {
+    "id": "object:createQuoteService.quote->object:createQuoteService:state:upstreamCalls:uses",
+    "entity": "edge",
+    "change": "unchanged"
+   },
+   {
+    "id": "object:createQuoteService.quote->object:createQuoteService.quote:state:price:uses",
+    "entity": "edge",
+    "change": "unchanged"
+   },
+   {
+    "id": "object:createQuoteService->object:createQuoteService:state:cache:declares",
+    "entity": "edge",
+    "change": "added"
+   },
+   {
+    "id": "object:createQuoteService.quote->object:createQuoteService:state:cache:uses",
+    "entity": "edge",
+    "change": "added"
+   }
+  ],
+  "summary": "Object layer: 1 added, 0 modified, 0 removed source nodes.",
+  "limitations": [
+   "Single-file JavaScript AST extraction; descriptions are structural source facts, not inferred business intent or executed outcomes.",
+   "Named functions and returned object methods are modeled. Anonymous callbacks, dynamic dispatch, imports and cross-file types are not expanded.",
+   "Map key aliases resolve direct const initializers; reassignment, mutation, destructuring and complex alias/dataflow analysis are not proven.",
+   "Flow models sequential statements, if/else, ternary assignments, return and throw. Other control constructs are marked unsupported.",
+   "Stable IDs use declaration names and operation anchors; repeated equivalent operations use occurrence order rather than source line numbers."
+  ]
+ },
+ "logic": {
+  "provenance": "static-analysis",
+  "before": {
+   "nodes": [
+    {
+     "id": "logic:createQuoteService:entry",
+     "label": "createQuoteService",
+     "kind": "entry",
+     "description": "entry in createQuoteService; static source structure.",
+     "properties": {
+      "parameters": "upstreamMs = 15"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "startLine": 1,
+       "endLine": 1,
+       "excerpt": "createQuoteService"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService:assign:upstreamCalls",
+     "label": "Set upstreamCalls",
+     "kind": "assignment",
+     "description": "assignment in createQuoteService; static source structure.",
+     "properties": {
+      "target": "upstreamCalls",
+      "value": "0"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "startLine": 2,
+       "endLine": 2,
+       "excerpt": "upstreamCalls = 0"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService:return:object",
+     "label": "Return service object",
+     "kind": "return",
+     "description": "return in createQuoteService; static source structure.",
+     "properties": {
+      "value": "{ upstreamCalls, quote }"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "startLine": 3,
+       "endLine": 13,
+       "excerpt": "return {\n    get upstreamCalls() { return upstreamCalls; },\n    async quote(account, sku, quantity = 1) {\n      if (!Number.isInteger(quantity) || quantity <= 0) throw new Error('Invalid quantity');\n      if (!['alpha', 'beta'].includes(account) || sku !== 'demo-product') throw new Error('Unknown pricing input');\n      upstreamCalls++;\n      await new Promise(resolve => setTimeout(resolve, upstreamMs));\n      const price = account === 'alpha' ? 80 : 100;\n      return price * quantity;\n    },\n  };"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.upstreamCalls:entry",
+     "label": "createQuoteService.upstreamCalls",
+     "kind": "entry",
+     "description": "entry in createQuoteService.upstreamCalls; static source structure.",
+     "properties": {
+      "parameters": ""
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "startLine": 4,
+       "endLine": 4,
+       "excerpt": "upstreamCalls"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.upstreamCalls:return:upstreamCalls",
+     "label": "Return upstreamCalls",
+     "kind": "return",
+     "description": "return in createQuoteService.upstreamCalls; static source structure.",
+     "properties": {
+      "value": "upstreamCalls"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "startLine": 4,
+       "endLine": 4,
+       "excerpt": "return upstreamCalls;"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.quote:entry",
+     "label": "createQuoteService.quote",
+     "kind": "entry",
+     "description": "entry in createQuoteService.quote; static source structure.",
+     "properties": {
+      "parameters": "account, sku, quantity = 1"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "startLine": 5,
+       "endLine": 5,
+       "excerpt": "quote"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.quote:branch:Number.isInteger",
+     "label": "If !Number.isInteger(quantity) || quantity <= 0",
+     "kind": "branch",
+     "description": "branch in createQuoteService.quote; static source structure.",
+     "properties": {
+      "condition": "!Number.isInteger(quantity) || quantity <= 0",
+      "calls": "Number.isInteger"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "startLine": 6,
+       "endLine": 6,
+       "excerpt": "!Number.isInteger(quantity) || quantity <= 0"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.quote:throw:new Error('Invalid quantity')",
+     "label": "Reject request",
+     "kind": "throw",
+     "description": "throw in createQuoteService.quote; static source structure.",
+     "properties": {
+      "error": "new Error('Invalid quantity')"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "startLine": 6,
+       "endLine": 6,
+       "excerpt": "throw new Error('Invalid quantity');"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.quote:branch:['alpha', 'beta'].includes",
+     "label": "If !['alpha', 'beta'].includes(account) || sku !== 'demo-product'",
+     "kind": "branch",
+     "description": "branch in createQuoteService.quote; static source structure.",
+     "properties": {
+      "condition": "!['alpha', 'beta'].includes(account) || sku !== 'demo-product'",
+      "calls": "['alpha', 'beta'].includes"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "startLine": 7,
+       "endLine": 7,
+       "excerpt": "!['alpha', 'beta'].includes(account) || sku !== 'demo-product'"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.quote:throw:new Error('Unknown pricing input')",
+     "label": "Reject request",
+     "kind": "throw",
+     "description": "throw in createQuoteService.quote; static source structure.",
+     "properties": {
+      "error": "new Error('Unknown pricing input')"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "startLine": 7,
+       "endLine": 7,
+       "excerpt": "throw new Error('Unknown pricing input');"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.quote:operation:upstreamCalls",
+     "label": "upstreamCalls++",
+     "kind": "operation",
+     "description": "operation in createQuoteService.quote; static source structure.",
+     "properties": {
+      "expression": "upstreamCalls++"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "startLine": 8,
+       "endLine": 8,
+       "excerpt": "upstreamCalls++;"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.quote:await:Promise",
+     "label": "await new Promise(resolve => setTimeout(resolve, upstreamMs))",
+     "kind": "await",
+     "description": "await in createQuoteService.quote; static source structure.",
+     "properties": {
+      "expression": "await new Promise(resolve => setTimeout(resolve, upstreamMs))"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "startLine": 9,
+       "endLine": 9,
+       "excerpt": "await new Promise(resolve => setTimeout(resolve, upstreamMs));"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.quote:branch:assign:price",
+     "label": "Choose price",
+     "kind": "branch",
+     "description": "branch in createQuoteService.quote; static source structure.",
+     "properties": {
+      "condition": "account === 'alpha'"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "startLine": 10,
+       "endLine": 10,
+       "excerpt": "account === 'alpha'"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.quote:value:price:true",
+     "label": "price: 80",
+     "kind": "value",
+     "description": "value in createQuoteService.quote; static source structure.",
+     "properties": {
+      "value": "80"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "startLine": 10,
+       "endLine": 10,
+       "excerpt": "80"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.quote:value:price:false",
+     "label": "price: 100",
+     "kind": "value",
+     "description": "value in createQuoteService.quote; static source structure.",
+     "properties": {
+      "value": "100"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "startLine": 10,
+       "endLine": 10,
+       "excerpt": "100"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.quote:assign:price",
+     "label": "Set price",
+     "kind": "assignment",
+     "description": "assignment in createQuoteService.quote; static source structure.",
+     "properties": {
+      "target": "price",
+      "value": "account === 'alpha' ? 80 : 100"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "startLine": 10,
+       "endLine": 10,
+       "excerpt": "price = account === 'alpha' ? 80 : 100"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.quote:return:price",
+     "label": "Return price * quantity",
+     "kind": "return",
+     "description": "return in createQuoteService.quote; static source structure.",
+     "properties": {
+      "value": "price * quantity"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "startLine": 11,
+       "endLine": 11,
+       "excerpt": "return price * quantity;"
+      }
+     ]
+    }
+   ],
+   "edges": [
+    {
+     "id": "logic:createQuoteService:entry->logic:createQuoteService:assign:upstreamCalls:next",
+     "source": "logic:createQuoteService:entry",
+     "target": "logic:createQuoteService:assign:upstreamCalls",
+     "label": "next"
+    },
+    {
+     "id": "logic:createQuoteService:assign:upstreamCalls->logic:createQuoteService:return:object:next",
+     "source": "logic:createQuoteService:assign:upstreamCalls",
+     "target": "logic:createQuoteService:return:object",
+     "label": "next"
+    },
+    {
+     "id": "logic:createQuoteService.upstreamCalls:entry->logic:createQuoteService.upstreamCalls:return:upstreamCalls:next",
+     "source": "logic:createQuoteService.upstreamCalls:entry",
+     "target": "logic:createQuoteService.upstreamCalls:return:upstreamCalls",
+     "label": "next"
+    },
+    {
+     "id": "logic:createQuoteService.quote:entry->logic:createQuoteService.quote:branch:Number.isInteger:next",
+     "source": "logic:createQuoteService.quote:entry",
+     "target": "logic:createQuoteService.quote:branch:Number.isInteger",
+     "label": "next"
+    },
+    {
+     "id": "logic:createQuoteService.quote:branch:Number.isInteger->logic:createQuoteService.quote:throw:new Error('Invalid quantity'):true",
+     "source": "logic:createQuoteService.quote:branch:Number.isInteger",
+     "target": "logic:createQuoteService.quote:throw:new Error('Invalid quantity')",
+     "label": "true"
+    },
+    {
+     "id": "logic:createQuoteService.quote:branch:Number.isInteger->logic:createQuoteService.quote:branch:['alpha', 'beta'].includes:false",
+     "source": "logic:createQuoteService.quote:branch:Number.isInteger",
+     "target": "logic:createQuoteService.quote:branch:['alpha', 'beta'].includes",
+     "label": "false"
+    },
+    {
+     "id": "logic:createQuoteService.quote:branch:['alpha', 'beta'].includes->logic:createQuoteService.quote:throw:new Error('Unknown pricing input'):true",
+     "source": "logic:createQuoteService.quote:branch:['alpha', 'beta'].includes",
+     "target": "logic:createQuoteService.quote:throw:new Error('Unknown pricing input')",
+     "label": "true"
+    },
+    {
+     "id": "logic:createQuoteService.quote:branch:['alpha', 'beta'].includes->logic:createQuoteService.quote:operation:upstreamCalls:false",
+     "source": "logic:createQuoteService.quote:branch:['alpha', 'beta'].includes",
+     "target": "logic:createQuoteService.quote:operation:upstreamCalls",
+     "label": "false"
+    },
+    {
+     "id": "logic:createQuoteService.quote:operation:upstreamCalls->logic:createQuoteService.quote:await:Promise:next",
+     "source": "logic:createQuoteService.quote:operation:upstreamCalls",
+     "target": "logic:createQuoteService.quote:await:Promise",
+     "label": "next"
+    },
+    {
+     "id": "logic:createQuoteService.quote:await:Promise->logic:createQuoteService.quote:branch:assign:price:next",
+     "source": "logic:createQuoteService.quote:await:Promise",
+     "target": "logic:createQuoteService.quote:branch:assign:price",
+     "label": "next"
+    },
+    {
+     "id": "logic:createQuoteService.quote:branch:assign:price->logic:createQuoteService.quote:value:price:true:true",
+     "source": "logic:createQuoteService.quote:branch:assign:price",
+     "target": "logic:createQuoteService.quote:value:price:true",
+     "label": "true"
+    },
+    {
+     "id": "logic:createQuoteService.quote:branch:assign:price->logic:createQuoteService.quote:value:price:false:false",
+     "source": "logic:createQuoteService.quote:branch:assign:price",
+     "target": "logic:createQuoteService.quote:value:price:false",
+     "label": "false"
+    },
+    {
+     "id": "logic:createQuoteService.quote:value:price:true->logic:createQuoteService.quote:assign:price:assign",
+     "source": "logic:createQuoteService.quote:value:price:true",
+     "target": "logic:createQuoteService.quote:assign:price",
+     "label": "assign"
+    },
+    {
+     "id": "logic:createQuoteService.quote:value:price:false->logic:createQuoteService.quote:assign:price:assign",
+     "source": "logic:createQuoteService.quote:value:price:false",
+     "target": "logic:createQuoteService.quote:assign:price",
+     "label": "assign"
+    },
+    {
+     "id": "logic:createQuoteService.quote:assign:price->logic:createQuoteService.quote:return:price:next",
+     "source": "logic:createQuoteService.quote:assign:price",
+     "target": "logic:createQuoteService.quote:return:price",
+     "label": "next"
+    }
+   ]
+  },
+  "after": {
+   "nodes": [
+    {
+     "id": "logic:createQuoteService:entry",
+     "label": "createQuoteService",
+     "kind": "entry",
+     "description": "entry in createQuoteService; static source structure.",
+     "properties": {
+      "parameters": "upstreamMs = 15"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 1,
+       "endLine": 1,
+       "excerpt": "createQuoteService"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService:assign:cache",
+     "label": "Set cache",
+     "kind": "assignment",
+     "description": "assignment in createQuoteService; static source structure.",
+     "properties": {
+      "target": "cache",
+      "value": "new Map()"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 2,
+       "endLine": 2,
+       "excerpt": "cache = new Map()"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService:assign:upstreamCalls",
+     "label": "Set upstreamCalls",
+     "kind": "assignment",
+     "description": "assignment in createQuoteService; static source structure.",
+     "properties": {
+      "target": "upstreamCalls",
+      "value": "0"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 3,
+       "endLine": 3,
+       "excerpt": "upstreamCalls = 0"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService:return:object",
+     "label": "Return service object",
+     "kind": "return",
+     "description": "return in createQuoteService; static source structure.",
+     "properties": {
+      "value": "{ upstreamCalls, quote }"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 4,
+       "endLine": 16,
+       "excerpt": "return {\n    get upstreamCalls() { return upstreamCalls; },\n    async quote(account, sku, quantity = 1) {\n      if (!Number.isInteger(quantity) || quantity <= 0) throw new Error('Invalid quantity');\n      if (!['alpha', 'beta'].includes(account) || sku !== 'demo-product') throw new Error('Unknown pricing input');\n      if (cache.has(sku)) return cache.get(sku) * quantity;\n      upstreamCalls++;\n      await new Promise(resolve => setTimeout(resolve, upstreamMs));\n      const price = account === 'alpha' ? 80 : 100;\n      cache.set(sku, price);\n      return price * quantity;\n    },\n  };"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.upstreamCalls:entry",
+     "label": "createQuoteService.upstreamCalls",
+     "kind": "entry",
+     "description": "entry in createQuoteService.upstreamCalls; static source structure.",
+     "properties": {
+      "parameters": ""
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 5,
+       "endLine": 5,
+       "excerpt": "upstreamCalls"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.upstreamCalls:return:upstreamCalls",
+     "label": "Return upstreamCalls",
+     "kind": "return",
+     "description": "return in createQuoteService.upstreamCalls; static source structure.",
+     "properties": {
+      "value": "upstreamCalls"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 5,
+       "endLine": 5,
+       "excerpt": "return upstreamCalls;"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.quote:entry",
+     "label": "createQuoteService.quote",
+     "kind": "entry",
+     "description": "entry in createQuoteService.quote; static source structure.",
+     "properties": {
+      "parameters": "account, sku, quantity = 1"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 6,
+       "endLine": 6,
+       "excerpt": "quote"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.quote:branch:Number.isInteger",
+     "label": "If !Number.isInteger(quantity) || quantity <= 0",
+     "kind": "branch",
+     "description": "branch in createQuoteService.quote; static source structure.",
+     "properties": {
+      "condition": "!Number.isInteger(quantity) || quantity <= 0",
+      "calls": "Number.isInteger"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 7,
+       "endLine": 7,
+       "excerpt": "!Number.isInteger(quantity) || quantity <= 0"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.quote:throw:new Error('Invalid quantity')",
+     "label": "Reject request",
+     "kind": "throw",
+     "description": "throw in createQuoteService.quote; static source structure.",
+     "properties": {
+      "error": "new Error('Invalid quantity')"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 7,
+       "endLine": 7,
+       "excerpt": "throw new Error('Invalid quantity');"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.quote:branch:['alpha', 'beta'].includes",
+     "label": "If !['alpha', 'beta'].includes(account) || sku !== 'demo-product'",
+     "kind": "branch",
+     "description": "branch in createQuoteService.quote; static source structure.",
+     "properties": {
+      "condition": "!['alpha', 'beta'].includes(account) || sku !== 'demo-product'",
+      "calls": "['alpha', 'beta'].includes"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 8,
+       "endLine": 8,
+       "excerpt": "!['alpha', 'beta'].includes(account) || sku !== 'demo-product'"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.quote:throw:new Error('Unknown pricing input')",
+     "label": "Reject request",
+     "kind": "throw",
+     "description": "throw in createQuoteService.quote; static source structure.",
+     "properties": {
+      "error": "new Error('Unknown pricing input')"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 8,
+       "endLine": 8,
+       "excerpt": "throw new Error('Unknown pricing input');"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.quote:branch:cache.has",
+     "label": "If cache.has(sku)",
+     "kind": "branch",
+     "description": "branch in createQuoteService.quote; static source structure.",
+     "properties": {
+      "condition": "cache.has(sku)",
+      "calls": "cache.has",
+      "keyExpressions": "sku"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 9,
+       "endLine": 9,
+       "excerpt": "cache.has(sku)"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.quote:return:cache.get",
+     "label": "Return cache.get(sku) * quantity",
+     "kind": "return",
+     "description": "return in createQuoteService.quote; static source structure.",
+     "properties": {
+      "value": "cache.get(sku) * quantity",
+      "calls": "cache.get",
+      "keyExpressions": "sku"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 9,
+       "endLine": 9,
+       "excerpt": "return cache.get(sku) * quantity;"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.quote:operation:upstreamCalls",
+     "label": "upstreamCalls++",
+     "kind": "operation",
+     "description": "operation in createQuoteService.quote; static source structure.",
+     "properties": {
+      "expression": "upstreamCalls++"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 10,
+       "endLine": 10,
+       "excerpt": "upstreamCalls++;"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.quote:await:Promise",
+     "label": "await new Promise(resolve => setTimeout(resolve, upstreamMs))",
+     "kind": "await",
+     "description": "await in createQuoteService.quote; static source structure.",
+     "properties": {
+      "expression": "await new Promise(resolve => setTimeout(resolve, upstreamMs))"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 11,
+       "endLine": 11,
+       "excerpt": "await new Promise(resolve => setTimeout(resolve, upstreamMs));"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.quote:branch:assign:price",
+     "label": "Choose price",
+     "kind": "branch",
+     "description": "branch in createQuoteService.quote; static source structure.",
+     "properties": {
+      "condition": "account === 'alpha'"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 12,
+       "endLine": 12,
+       "excerpt": "account === 'alpha'"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.quote:value:price:true",
+     "label": "price: 80",
+     "kind": "value",
+     "description": "value in createQuoteService.quote; static source structure.",
+     "properties": {
+      "value": "80"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 12,
+       "endLine": 12,
+       "excerpt": "80"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.quote:value:price:false",
+     "label": "price: 100",
+     "kind": "value",
+     "description": "value in createQuoteService.quote; static source structure.",
+     "properties": {
+      "value": "100"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 12,
+       "endLine": 12,
+       "excerpt": "100"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.quote:assign:price",
+     "label": "Set price",
+     "kind": "assignment",
+     "description": "assignment in createQuoteService.quote; static source structure.",
+     "properties": {
+      "target": "price",
+      "value": "account === 'alpha' ? 80 : 100"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 12,
+       "endLine": 12,
+       "excerpt": "price = account === 'alpha' ? 80 : 100"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.quote:call:cache.set",
+     "label": "cache.set(sku, price)",
+     "kind": "call",
+     "description": "call in createQuoteService.quote; static source structure.",
+     "properties": {
+      "expression": "cache.set(sku, price)",
+      "calls": "cache.set",
+      "keyExpressions": "sku"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 13,
+       "endLine": 13,
+       "excerpt": "cache.set(sku, price);"
+      }
+     ]
+    },
+    {
+     "id": "logic:createQuoteService.quote:return:price",
+     "label": "Return price * quantity",
+     "kind": "return",
+     "description": "return in createQuoteService.quote; static source structure.",
+     "properties": {
+      "value": "price * quantity"
+     },
+     "citations": [
+      {
+       "path": "src/pricing.mjs",
+       "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "startLine": 14,
+       "endLine": 14,
+       "excerpt": "return price * quantity;"
+      }
+     ]
+    }
+   ],
+   "edges": [
+    {
+     "id": "logic:createQuoteService:entry->logic:createQuoteService:assign:cache:next",
+     "source": "logic:createQuoteService:entry",
+     "target": "logic:createQuoteService:assign:cache",
+     "label": "next"
+    },
+    {
+     "id": "logic:createQuoteService:assign:cache->logic:createQuoteService:assign:upstreamCalls:next",
+     "source": "logic:createQuoteService:assign:cache",
+     "target": "logic:createQuoteService:assign:upstreamCalls",
+     "label": "next"
+    },
+    {
+     "id": "logic:createQuoteService:assign:upstreamCalls->logic:createQuoteService:return:object:next",
+     "source": "logic:createQuoteService:assign:upstreamCalls",
+     "target": "logic:createQuoteService:return:object",
+     "label": "next"
+    },
+    {
+     "id": "logic:createQuoteService.upstreamCalls:entry->logic:createQuoteService.upstreamCalls:return:upstreamCalls:next",
+     "source": "logic:createQuoteService.upstreamCalls:entry",
+     "target": "logic:createQuoteService.upstreamCalls:return:upstreamCalls",
+     "label": "next"
+    },
+    {
+     "id": "logic:createQuoteService.quote:entry->logic:createQuoteService.quote:branch:Number.isInteger:next",
+     "source": "logic:createQuoteService.quote:entry",
+     "target": "logic:createQuoteService.quote:branch:Number.isInteger",
+     "label": "next"
+    },
+    {
+     "id": "logic:createQuoteService.quote:branch:Number.isInteger->logic:createQuoteService.quote:throw:new Error('Invalid quantity'):true",
+     "source": "logic:createQuoteService.quote:branch:Number.isInteger",
+     "target": "logic:createQuoteService.quote:throw:new Error('Invalid quantity')",
+     "label": "true"
+    },
+    {
+     "id": "logic:createQuoteService.quote:branch:Number.isInteger->logic:createQuoteService.quote:branch:['alpha', 'beta'].includes:false",
+     "source": "logic:createQuoteService.quote:branch:Number.isInteger",
+     "target": "logic:createQuoteService.quote:branch:['alpha', 'beta'].includes",
+     "label": "false"
+    },
+    {
+     "id": "logic:createQuoteService.quote:branch:['alpha', 'beta'].includes->logic:createQuoteService.quote:throw:new Error('Unknown pricing input'):true",
+     "source": "logic:createQuoteService.quote:branch:['alpha', 'beta'].includes",
+     "target": "logic:createQuoteService.quote:throw:new Error('Unknown pricing input')",
+     "label": "true"
+    },
+    {
+     "id": "logic:createQuoteService.quote:branch:['alpha', 'beta'].includes->logic:createQuoteService.quote:branch:cache.has:false",
+     "source": "logic:createQuoteService.quote:branch:['alpha', 'beta'].includes",
+     "target": "logic:createQuoteService.quote:branch:cache.has",
+     "label": "false"
+    },
+    {
+     "id": "logic:createQuoteService.quote:branch:cache.has->logic:createQuoteService.quote:return:cache.get:true",
+     "source": "logic:createQuoteService.quote:branch:cache.has",
+     "target": "logic:createQuoteService.quote:return:cache.get",
+     "label": "true"
+    },
+    {
+     "id": "logic:createQuoteService.quote:branch:cache.has->logic:createQuoteService.quote:operation:upstreamCalls:false",
+     "source": "logic:createQuoteService.quote:branch:cache.has",
+     "target": "logic:createQuoteService.quote:operation:upstreamCalls",
+     "label": "false"
+    },
+    {
+     "id": "logic:createQuoteService.quote:operation:upstreamCalls->logic:createQuoteService.quote:await:Promise:next",
+     "source": "logic:createQuoteService.quote:operation:upstreamCalls",
+     "target": "logic:createQuoteService.quote:await:Promise",
+     "label": "next"
+    },
+    {
+     "id": "logic:createQuoteService.quote:await:Promise->logic:createQuoteService.quote:branch:assign:price:next",
+     "source": "logic:createQuoteService.quote:await:Promise",
+     "target": "logic:createQuoteService.quote:branch:assign:price",
+     "label": "next"
+    },
+    {
+     "id": "logic:createQuoteService.quote:branch:assign:price->logic:createQuoteService.quote:value:price:true:true",
+     "source": "logic:createQuoteService.quote:branch:assign:price",
+     "target": "logic:createQuoteService.quote:value:price:true",
+     "label": "true"
+    },
+    {
+     "id": "logic:createQuoteService.quote:branch:assign:price->logic:createQuoteService.quote:value:price:false:false",
+     "source": "logic:createQuoteService.quote:branch:assign:price",
+     "target": "logic:createQuoteService.quote:value:price:false",
+     "label": "false"
+    },
+    {
+     "id": "logic:createQuoteService.quote:value:price:true->logic:createQuoteService.quote:assign:price:assign",
+     "source": "logic:createQuoteService.quote:value:price:true",
+     "target": "logic:createQuoteService.quote:assign:price",
+     "label": "assign"
+    },
+    {
+     "id": "logic:createQuoteService.quote:value:price:false->logic:createQuoteService.quote:assign:price:assign",
+     "source": "logic:createQuoteService.quote:value:price:false",
+     "target": "logic:createQuoteService.quote:assign:price",
+     "label": "assign"
+    },
+    {
+     "id": "logic:createQuoteService.quote:assign:price->logic:createQuoteService.quote:call:cache.set:next",
+     "source": "logic:createQuoteService.quote:assign:price",
+     "target": "logic:createQuoteService.quote:call:cache.set",
+     "label": "next"
+    },
+    {
+     "id": "logic:createQuoteService.quote:call:cache.set->logic:createQuoteService.quote:return:price:next",
+     "source": "logic:createQuoteService.quote:call:cache.set",
+     "target": "logic:createQuoteService.quote:return:price",
+     "label": "next"
+    }
+   ]
+  },
+  "changes": [
+   {
+    "id": "logic:createQuoteService:entry",
+    "entity": "node",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService:assign:upstreamCalls",
+    "entity": "node",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService:return:object",
+    "entity": "node",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService.upstreamCalls:entry",
+    "entity": "node",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService.upstreamCalls:return:upstreamCalls",
+    "entity": "node",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService.quote:entry",
+    "entity": "node",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService.quote:branch:Number.isInteger",
+    "entity": "node",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService.quote:throw:new Error('Invalid quantity')",
+    "entity": "node",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService.quote:branch:['alpha', 'beta'].includes",
+    "entity": "node",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService.quote:throw:new Error('Unknown pricing input')",
+    "entity": "node",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService.quote:operation:upstreamCalls",
+    "entity": "node",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService.quote:await:Promise",
+    "entity": "node",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService.quote:branch:assign:price",
+    "entity": "node",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService.quote:value:price:true",
+    "entity": "node",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService.quote:value:price:false",
+    "entity": "node",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService.quote:assign:price",
+    "entity": "node",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService.quote:return:price",
+    "entity": "node",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService:assign:cache",
+    "entity": "node",
+    "change": "added"
+   },
+   {
+    "id": "logic:createQuoteService.quote:branch:cache.has",
+    "entity": "node",
+    "change": "added"
+   },
+   {
+    "id": "logic:createQuoteService.quote:return:cache.get",
+    "entity": "node",
+    "change": "added"
+   },
+   {
+    "id": "logic:createQuoteService.quote:call:cache.set",
+    "entity": "node",
+    "change": "added"
+   },
+   {
+    "id": "logic:createQuoteService:entry->logic:createQuoteService:assign:upstreamCalls:next",
+    "entity": "edge",
+    "change": "removed"
+   },
+   {
+    "id": "logic:createQuoteService:assign:upstreamCalls->logic:createQuoteService:return:object:next",
+    "entity": "edge",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService.upstreamCalls:entry->logic:createQuoteService.upstreamCalls:return:upstreamCalls:next",
+    "entity": "edge",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService.quote:entry->logic:createQuoteService.quote:branch:Number.isInteger:next",
+    "entity": "edge",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService.quote:branch:Number.isInteger->logic:createQuoteService.quote:throw:new Error('Invalid quantity'):true",
+    "entity": "edge",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService.quote:branch:Number.isInteger->logic:createQuoteService.quote:branch:['alpha', 'beta'].includes:false",
+    "entity": "edge",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService.quote:branch:['alpha', 'beta'].includes->logic:createQuoteService.quote:throw:new Error('Unknown pricing input'):true",
+    "entity": "edge",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService.quote:branch:['alpha', 'beta'].includes->logic:createQuoteService.quote:operation:upstreamCalls:false",
+    "entity": "edge",
+    "change": "removed"
+   },
+   {
+    "id": "logic:createQuoteService.quote:operation:upstreamCalls->logic:createQuoteService.quote:await:Promise:next",
+    "entity": "edge",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService.quote:await:Promise->logic:createQuoteService.quote:branch:assign:price:next",
+    "entity": "edge",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService.quote:branch:assign:price->logic:createQuoteService.quote:value:price:true:true",
+    "entity": "edge",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService.quote:branch:assign:price->logic:createQuoteService.quote:value:price:false:false",
+    "entity": "edge",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService.quote:value:price:true->logic:createQuoteService.quote:assign:price:assign",
+    "entity": "edge",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService.quote:value:price:false->logic:createQuoteService.quote:assign:price:assign",
+    "entity": "edge",
+    "change": "unchanged"
+   },
+   {
+    "id": "logic:createQuoteService.quote:assign:price->logic:createQuoteService.quote:return:price:next",
+    "entity": "edge",
+    "change": "removed"
+   },
+   {
+    "id": "logic:createQuoteService:entry->logic:createQuoteService:assign:cache:next",
+    "entity": "edge",
+    "change": "added"
+   },
+   {
+    "id": "logic:createQuoteService:assign:cache->logic:createQuoteService:assign:upstreamCalls:next",
+    "entity": "edge",
+    "change": "added"
+   },
+   {
+    "id": "logic:createQuoteService.quote:branch:['alpha', 'beta'].includes->logic:createQuoteService.quote:branch:cache.has:false",
+    "entity": "edge",
+    "change": "added"
+   },
+   {
+    "id": "logic:createQuoteService.quote:branch:cache.has->logic:createQuoteService.quote:return:cache.get:true",
+    "entity": "edge",
+    "change": "added"
+   },
+   {
+    "id": "logic:createQuoteService.quote:branch:cache.has->logic:createQuoteService.quote:operation:upstreamCalls:false",
+    "entity": "edge",
+    "change": "added"
+   },
+   {
+    "id": "logic:createQuoteService.quote:assign:price->logic:createQuoteService.quote:call:cache.set:next",
+    "entity": "edge",
+    "change": "added"
+   },
+   {
+    "id": "logic:createQuoteService.quote:call:cache.set->logic:createQuoteService.quote:return:price:next",
+    "entity": "edge",
+    "change": "added"
+   }
+  ],
+  "summary": "Logic layer: 4 added, 0 modified, 0 removed source nodes.",
+  "limitations": [
+   "Single-file JavaScript AST extraction; descriptions are structural source facts, not inferred business intent or executed outcomes.",
+   "Named functions and returned object methods are modeled. Anonymous callbacks, dynamic dispatch, imports and cross-file types are not expanded.",
+   "Map key aliases resolve direct const initializers; reassignment, mutation, destructuring and complex alias/dataflow analysis are not proven.",
+   "Flow models sequential statements, if/else, ternary assignments, return and throw. Other control constructs are marked unsupported.",
+   "Stable IDs use declaration names and operation anchors; repeated equivalent operations use occurrence order rather than source line numbers."
+  ]
+ },
+ "billOfBusiness": [],
+ "events": []
+}

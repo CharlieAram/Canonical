@@ -1,11 +1,14 @@
-import { HealthSchema, RunSchema, type AnalysisRun, type ExecutionMode, type Health } from '@canonical/contracts';
+import { HealthSchema, ReviewSchema, RunSchema, type AnalysisRun, type ExecutionMode, type Health } from '@canonical/contracts';
 import { createUiFixture } from '@canonical/demo';
+import reviewFixture from './review-fixture.json';
 import { ContextWorkspaceSchema, ContextImportSchema, CreateProposalSchema, ReviewProposalSchema, type ContextWorkspace, type ContextImport, type CreateProposal, type ReviewProposal } from '@canonical/contracts';
 import { fixtureWorkspace, fixtureImport, fixturePropose, fixtureReview } from './context-fixture';
 
 // The only UI/backend boundary. Never put server credentials in VITE_* variables.
 export const isFixture = import.meta.env.VITE_DATA_SOURCE === 'fixture';
-const fixtureRuns: AnalysisRun[] = [createUiFixture()];
+// Fixture review produced once by the real static extractor (packages/runner/src/extraction.ts).
+const withReview = (run: AnalysisRun): AnalysisRun => ({ ...run, review: ReviewSchema.parse(reviewFixture) });
+const fixtureRuns: AnalysisRun[] = [withReview(createUiFixture())];
 
 async function request(path: string, init?: RequestInit): Promise<Response> {
   const response = await fetch(`/api${path}`, init);
@@ -70,7 +73,7 @@ export const api = {
   },
   async startRun(execution: ExecutionMode): Promise<AnalysisRun> {
     if (isFixture) {
-      const run = { ...createUiFixture(), id: `ui-fixture-${crypto.randomUUID()}` };
+      const run = { ...withReview(createUiFixture()), id: `ui-fixture-${crypto.randomUUID()}` };
       fixtureRuns.unshift(run);
       return run;
     }
