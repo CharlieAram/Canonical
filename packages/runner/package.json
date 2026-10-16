@@ -1,0 +1,11 @@
+{
+  "name": "@canonical/runner",
+  "private": true,
+  "type": "module",
+  "exports": "./src/index.ts",
+  "dependencies": {
+    "@canonical/contracts": "*",
+    "@canonical/demo": "*",
+    "@canonical/integrations": "*"
+  }
+}

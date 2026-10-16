@@ -1,0 +1,11 @@
+services:
+  surrealdb:
+    image: surrealdb/surrealdb:v3.3.0
+    command: start --bind 0.0.0.0:8000 --user root --pass canonical-local-only surrealkv:/data/canonical.db
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - surreal-data:/data
+
+volumes:
+  surreal-data:

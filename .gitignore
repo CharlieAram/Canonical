@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+!apps/ui/.env.fixture
+.canonical/output/
+coverage/
+*.log
+.DS_Store

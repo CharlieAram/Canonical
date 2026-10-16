@@ -1,0 +1,13 @@
+{
+  "name": "@canonical/api",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@canonical/contracts": "*",
+    "@canonical/demo": "*",
+    "@canonical/integrations": "*",
+    "@canonical/runner": "*",
+    "fastify": "5.12.7",
+    "zod": "^4.0.0"
+  }
+}

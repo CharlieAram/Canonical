@@ -1,0 +1,31 @@
+{
+  "name": "canonical",
+  "private": true,
+  "type": "module",
+  "workspaces": ["apps/*", "packages/*", "integrations"],
+  "engines": { "node": ">=22.12.0" },
+  "scripts": {
+    "dev": "concurrently -k -n api,ui -c blue,magenta \"npm run dev:api\" \"npm run dev:ui\"",
+    "dev:api": "tsx watch --env-file-if-exists=.env apps/api/src/index.ts",
+    "dev:ui": "npm run dev --workspace @canonical/ui",
+    "dev:ui:fixture": "npm run dev:fixture --workspace @canonical/ui",
+    "start:api": "tsx --env-file-if-exists=.env apps/api/src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "npm run typecheck && npm run build --workspace @canonical/ui",
+    "test": "tsx --test tests/*.test.ts",
+    "test:surreal": "tsx --env-file-if-exists=.env --test tests/surreal.integration.ts",
+    "check": "npm run typecheck && npm test && npm run build --workspace @canonical/ui",
+    "db:up": "docker compose up -d surrealdb",
+    "db:down": "docker compose down",
+    "db:init": "tsx --env-file-if-exists=.env scripts/init-db.ts",
+    "db:smoke": "tsx --env-file-if-exists=.env scripts/smoke-surreal.ts",
+    "daytona:smoke": "tsx --env-file-if-exists=.env scripts/smoke-daytona.ts",
+    "analyze": "tsx --env-file-if-exists=.env scripts/analyze.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "concurrently": "^9.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.9.0"
+  }
+}

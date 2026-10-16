@@ -1,0 +1,14 @@
+{
+  "name": "@canonical/integrations",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./daytona": "./daytona.ts",
+    "./surrealdb": "./surrealdb.ts"
+  },
+  "dependencies": {
+    "@canonical/contracts": "*",
+    "@daytona/sdk": "0.224.1",
+    "surrealdb": "2.1.1"
+  }
+}
