@@ -1,1 +1,3 @@
+# Canonical
+
 Canonical gets triggered in the CI-CD pipeline of your repo, looks at the commit, and shows the user a graph of the business logic/ontology layer backing their whole repo, with the triggering commits changes highlighted as a diff, and the key performance and buiness requirements benchmarked and displayed for that commit, allowing a completely non-technical person to see how their coding agents have actually thought about the engineering problem in terms of real world concepts, and they can review the tradeoffs to performance and check hard business requirements are met. This logic layer is then fed back to the repo so that agents making contributions have the full business context available in context/via a skill.
